@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="com.mytrackerapp.myapplication.RegisterForm">
+
+    <TextView
+        android:text="Wellcome, Please login or register."
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:id="@+id/wellcome_text"
+        android:layout_alignParentEnd="true"
+        android:autoText="true"
+        android:freezesText="false"
+        android:textSize="18sp"
+        tools:textStyle="bold"
+        android:textAlignment="center" />
+
+    <TextView
+        android:text="Username:"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        android:textSize="18sp"
+        tools:textStyle="bold"
+        android:id="@+id/usernname_text"
+        android:layout_below="@+id/wellcome_text"
+        android:layout_alignParentStart="true" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textPersonName"
+        android:ems="10"
+        android:text="Tomer"
+        android:id="@+id/username_input_text"
+        android:layout_below="@+id/usernname_text"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true" />
+
+    <TextView
+        android:text="Email:"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/email_text"
+        android:autoText="true"
+        android:freezesText="false"
+        android:textSize="18sp"
+        tools:textStyle="bold"
+        android:layout_below="@+id/username_input_text"
+        android:layout_alignParentStart="true" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textWebEmailAddress"
+        android:ems="10"
+        android:text="Tomer1@walla.com"
+        android:id="@+id/email_input_Text"
+        android:layout_below="@+id/email_text"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true" />
+
+    <TextView
+        android:text="Password:"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/password_text_view"
+        android:autoText="true"
+        android:freezesText="false"
+        android:textSize="18sp"
+        tools:textStyle="bold"
+        android:layout_below="@+id/email_input_Text"
+        android:layout_alignEnd="@+id/usernname_text" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="textPassword"
+        android:ems="10"
+        android:text="123456"
+        android:id="@+id/password_input_text"
+        android:layout_below="@+id/password_text_view"
+        android:layout_alignStart="@+id/password_text_view"
+        android:layout_alignParentEnd="true" />
+
+    <Button
+        android:text="Login"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/login_button"
+        android:onClick="loginBtnClicked"
+        android:layout_marginTop="52dp"
+        android:layout_alignTop="@+id/password_input_text"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:text="Haven't registered yet?!\nInsert Email and Password and click here for registration"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/register_text"
+        android:onClick="registerBtnClicked"
+        android:textAlignment="center"
+        android:layout_below="@+id/login_button"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true" />
+</RelativeLayout>

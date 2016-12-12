@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "219167430564",
+    "firebase_url": "https://mytrackerapp-d3064.firebaseio.com",
+    "project_id": "mytrackerapp-d3064",
+    "storage_bucket": "mytrackerapp-d3064.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:219167430564:android:1561ffaff49ba8bf",
+        "android_client_info": {
+          "package_name": "com.mytrackerapp.myapplication"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "219167430564-4t3umiobglg5u2kcm2tjfquhd25k54li.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDq2koGMR0VfpGyDPwMmbai_B0HtXGUbFc"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
