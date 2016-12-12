@@ -43,16 +43,14 @@ public class MenuActivity extends AppCompatActivity implements ZXingScannerView.
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode,String permissions[], int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode ,String[] permissions, int[] grantResults) {
         switch(requestCode){
             case REQUEST_CAMERA_PERMISSIONS :{
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     Log.e("Permission", "Camera permission granted");
-
                 } else {
-
                     Log.e("Permission", "Camera permission denayied");
                     // permission denied, boo! Disable the
                     // functionality that depends on this permission.
