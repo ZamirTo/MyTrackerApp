@@ -4,38 +4,20 @@ import android.Manifest;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.os.Handler;
-import android.os.Looper;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
-import android.view.Menu;
 import android.view.View;
-
-import android.Manifest;
-import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Build;
-import android.os.Bundle;
 import android.provider.Settings;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
-import android.support.v7.app.AppCompatActivity;
-import android.view.View;
 import android.widget.Button;
-import android.widget.TextView;
-
-import static android.content.Context.LOCATION_SERVICE;
-
 import com.google.zxing.Result;
-
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
 
 public class MenuActivity extends AppCompatActivity implements ZXingScannerView.ResultHandler{
@@ -56,7 +38,7 @@ public class MenuActivity extends AppCompatActivity implements ZXingScannerView.
         listener = new LocationListener() {
             @Override
             public void onLocationChanged(Location location) {
-                Intent intentBundle = new Intent(MenuActivity.this,MapActivity.class);
+                Intent intentBundle = new Intent(MenuActivity.this,MapsActivity.class);
                 Bundle bundle = new Bundle();
                 String[] cords = {location.getLongitude()+"",location.getLatitude()+""};
                 bundle.putStringArray("cords", cords);
