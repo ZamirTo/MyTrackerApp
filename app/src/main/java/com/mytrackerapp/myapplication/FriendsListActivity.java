@@ -5,6 +5,7 @@ import java.util.List;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -47,7 +48,7 @@ public class FriendsListActivity extends Activity {
       public void onDataChange(DataSnapshot dataSnapshot) {
         for (DataSnapshot postSnapshot: dataSnapshot.getChildren()) {
           newUser post = postSnapshot.getValue(newUser.class);
-          modelItems.add(new newUserModel(post.getName(),false));
+          modelItems.add(new newUserModel(post.getName(),post.getLocation(),false));
           System.out.println("DONE");
         }
       }
@@ -65,22 +66,40 @@ public class FriendsListActivity extends Activity {
         newUserModel friend = listAdapter.getItem(position);
         friend.toggleChecked();
         FriendViewHolder viewHolder = (FriendViewHolder) item.getTag();
-        viewHolder.getCheckBox().setChecked( friend.isChecked() );
+        viewHolder.getCheckBox().setChecked(friend.isChecked());
       }
     });
   }
 
   public void onClickFriends(View v){
-    // Set our custom array adapter as the ListView's adapter.
-    listAdapter = new PlanetArrayAdapter(this, modelItems);
-    mainListView.setAdapter( listAdapter );
+    if(modelItems.size()!=0) {
+      // Set our custom array adapter as the ListView's adapter.
+      listAdapter = new PlanetArrayAdapter(this, modelItems);
+      mainListView.setAdapter(listAdapter);
+    }
   }
 
   public void onClickChecked(View v){
-    for (int i = 0 ; i < listAdapter.getCount() ; i++){
-      if(listAdapter.getItem(i).isChecked()){
-        System.out.println(listAdapter.getItem(i).getName());
+    if(modelItems.size()!=0) {
+      int counterCheck = 0;
+      int index = 0;
+      Intent intentBundle = new Intent(FriendsListActivity.this, MapsActivity.class);
+      Bundle bundle = new Bundle();
+      for (int i = 0; i < listAdapter.getCount(); i++) {
+        if (listAdapter.getItem(i).isChecked()) {
+          counterCheck++;
+        }
       }
+      String[] cords = new String[counterCheck*2];
+      for (int i = 0; i < listAdapter.getCount(); i++) {
+        if (listAdapter.getItem(i).isChecked()) {
+          cords[index++] = listAdapter.getItem(i).getName();
+          cords[index++] = listAdapter.getItem(i).getCordinates();
+        }
+      }
+      bundle.putStringArray("fcords", cords);
+      intentBundle.putExtras(bundle);
+      startActivity(intentBundle);
     }
   }
 
