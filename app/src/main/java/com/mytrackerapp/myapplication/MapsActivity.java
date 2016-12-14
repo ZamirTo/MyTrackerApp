@@ -47,21 +47,25 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
 
         if(!extBundle.isEmpty()) {
             boolean hasGpsCords = extBundle.containsKey("cords");
+            boolean hasFriendsCords = extBundle.containsKey("fcords");
             if (hasGpsCords) {
+                System.out.println("im HERE");
                 cords = extBundle.getStringArray("cords");
+                LatLng position = new LatLng(Double.parseDouble(cords[0]), Double.parseDouble(cords[1]));
+                mMap.addMarker(new MarkerOptions().position(position).title("You Are Here"));
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(position, 14));
+            }
+            else if(hasFriendsCords){
+                cords = extBundle.getStringArray("fcords");
                 LatLng[] places = new LatLng[cords.length / 2];
-                int howManyPlaces = cords.length / 2;
-                if (cords.length / 2 == 1) {
-                    System.out.println("im here " + cords[0] + cords[1]);
-                    places[0] = new LatLng(Double.parseDouble(cords[0]), Double.parseDouble(cords[1]));
-                    mMap.addMarker(new MarkerOptions().position(places[0]).title("You Are Here"));
-                } else {
-                    for (int i = 0; i < howManyPlaces; i++) {
-                        places[i] = new LatLng(Double.parseDouble(cords[i]), Double.parseDouble(cords[i + 1]));
-                        mMap.addMarker(new MarkerOptions().position(places[i]).title("Friend "+i));
-                    }
+                int index = 0;
+                for (int i = 0; i < cords.length; i+=2) {
+                    String[] cordinates = cords[i+1].split(",");
+                    places[index] = new LatLng(Double.parseDouble(cordinates[0]), Double.parseDouble(cordinates[1]));
+                    mMap.addMarker(new MarkerOptions().position(places[index++]).title(cords[i]));
                 }
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(places[0],14));
+
             }
         }
     }
