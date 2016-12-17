@@ -9,17 +9,28 @@
     android:paddingBottom="@dimen/activity_vertical_margin"
     tools:context=".BLEActivity">
 
-    <ListView
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:id="@+id/mainListView"
-        android:layout_below="@+id/button_scanBT"></ListView>
+    <Button
+        android:text="Get Scanned Bluetooth Devices"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/getBLEBtn"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true" />
 
     <Button
         android:id="@+id/button_scanBT"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="SCAN FOR BT DEVICES"
+        android:text="Scan Bluetooth Devices"
+        android:layout_below="@+id/getBLEBtn"
         android:layout_alignParentStart="true" />
+
+    <ListView
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:id="@+id/mainListView"
+        android:layout_below="@+id/button_scanBT"
+        android:layout_alignParentStart="true"></ListView>
 
 </RelativeLayout>

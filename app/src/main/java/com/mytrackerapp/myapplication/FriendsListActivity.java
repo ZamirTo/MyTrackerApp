@@ -2,7 +2,6 @@ package com.mytrackerapp.myapplication;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
@@ -28,7 +27,7 @@ public class FriendsListActivity extends Activity {
   private newUserModel[] friendsList;
   private ArrayAdapter<newUserModel> listAdapter ;
   private DatabaseReference mDatabase;
-  ArrayList<newUserModel> modelItems;
+  private ArrayList<newUserModel> modelItems;
 
 
   /** Called when the activity is first created. */
@@ -127,20 +126,20 @@ public class FriendsListActivity extends Activity {
     }
   }
 
-  /** Custom adapter for displaying an array of Planet objects. */
+  /** Custom adapter for displaying an array of Friends objects. */
   private static class FriendsArrayAdapter extends ArrayAdapter<newUserModel> {
 
     private LayoutInflater inflater;
 
-    public FriendsArrayAdapter( Context context, List<newUserModel> planetList ) {
-      super( context, R.layout.simplerow, R.id.rowTextView, planetList );
+    public FriendsArrayAdapter( Context context, List<newUserModel> friendList ) {
+      super( context, R.layout.simplerow, R.id.rowTextView, friendList );
       // Cache the LayoutInflate to avoid asking for a new one each time.
       inflater = LayoutInflater.from(context) ;
     }
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-      // Planet to display
+      // Friend to display
       newUserModel friend = (newUserModel) this.getItem( position );
 
       // The child views in each row.
@@ -159,7 +158,7 @@ public class FriendsListActivity extends Activity {
         // call findViewById() later when we reuse the row.
         convertView.setTag( new FriendViewHolder(textView,checkBox) );
 
-        // If CheckBox is toggled, update the planet it is tagged with.
+        // If CheckBox is toggled, update the Friend it is tagged with.
         checkBox.setOnClickListener( new View.OnClickListener() {
           public void onClick(View v) {
             CheckBox cb = (CheckBox) v ;
