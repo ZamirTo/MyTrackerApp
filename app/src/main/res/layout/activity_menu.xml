@@ -37,17 +37,6 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/bltBtn"
-        android:background="@drawable/ble"
-        tools:ignore="RelativeOverlap"
-        android:layout_marginTop="32dp"
-        android:layout_below="@+id/friendBtn"
-        android:layout_alignLeft="@+id/friendBtn"
-        android:layout_alignStart="@+id/friendBtn" />
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:id="@+id/gpsBtn"
         android:background="@drawable/gps"
         tools:ignore="HardcodedText"
@@ -71,5 +60,16 @@
         android:fontFamily="sans-serif-medium"
         android:textSize="24sp"
         android:textAllCaps="false" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/bltBtn"
+        android:background="@drawable/ble"
+        tools:ignore="RelativeOverlap"
+        android:layout_marginTop="30dp"
+        android:layout_below="@+id/friendBtn"
+        android:layout_alignParentEnd="true"
+        android:onClick="getBLE" />
 
 </RelativeLayout>

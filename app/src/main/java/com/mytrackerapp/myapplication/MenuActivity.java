@@ -26,13 +26,14 @@ public class MenuActivity extends AppCompatActivity implements ZXingScannerView.
     private LocationManager locationManager;
     private LocationListener listener;
     private ZXingScannerView mScannerView;
-    final private int REQUEST_GPS_PERMISSIONS = 2;
+    final private int REQUEST_PERMISSIONS = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu);
         gpsBtn = (Button) findViewById(R.id.gpsBtn);
+        //configure_button();
 
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         listener = new LocationListener() {
@@ -74,7 +75,7 @@ public class MenuActivity extends AppCompatActivity implements ZXingScannerView.
     @Override
     public void onRequestPermissionsResult(int requestCode ,String[] permissions, int[] grantResults) {
         switch(requestCode){
-            case REQUEST_GPS_PERMISSIONS: {
+            case REQUEST_PERMISSIONS: {
                 configure_button();
                 break;
             }
@@ -83,7 +84,6 @@ public class MenuActivity extends AppCompatActivity implements ZXingScannerView.
             }
         }
     }
-
 
     public void QrScanner(View view){
         mScannerView = new ZXingScannerView(this);
@@ -94,10 +94,20 @@ public class MenuActivity extends AppCompatActivity implements ZXingScannerView.
 
     void configure_button(){
         // first check for permissions
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(this,Manifest.permission.CAMERA)!= PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(this,Manifest.permission.BLUETOOTH) != PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(this,Manifest.permission.BLUETOOTH_ADMIN)!=PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(this,Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                requestPermissions(new String[]{Manifest.permission.CAMERA,Manifest.permission.ACCESS_COARSE_LOCATION,Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.INTERNET}
-                        ,REQUEST_GPS_PERMISSIONS);
+                requestPermissions(new String[]{Manifest.permission.CAMERA,
+                        Manifest.permission.ACCESS_COARSE_LOCATION ,
+                        Manifest.permission.ACCESS_FINE_LOCATION,
+                        Manifest.permission.INTERNET,
+                        Manifest.permission.BLUETOOTH,
+                        Manifest.permission.BLUETOOTH_ADMIN}
+                        ,REQUEST_PERMISSIONS);
             }
             return;
         }
@@ -111,10 +121,11 @@ public class MenuActivity extends AppCompatActivity implements ZXingScannerView.
         });
     }
 
-
     public void getFriends(View v){
         startActivity(new Intent(this,FriendsListActivity.class));
     }
+
+    public void getBLE (View v) { startActivity(new Intent(this, BLEActivity.class)); }
 
     @Override
     public void onPause(){
@@ -138,11 +149,8 @@ public class MenuActivity extends AppCompatActivity implements ZXingScannerView.
 
             }
         });
-
         AlertDialog alert1 = builder.create();
         alert1.show();
-
         startActivity(new Intent(this,MenuActivity.class));
-
     }
 }

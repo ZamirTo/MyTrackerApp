@@ -74,7 +74,7 @@ public class FriendsListActivity extends Activity {
   public void onClickFriends(View v){
     if(modelItems.size()!=0) {
       // Set our custom array adapter as the ListView's adapter.
-      listAdapter = new PlanetArrayAdapter(this, modelItems);
+      listAdapter = new FriendsArrayAdapter(this, modelItems);
       mainListView.setAdapter(listAdapter);
     }
   }
@@ -128,11 +128,11 @@ public class FriendsListActivity extends Activity {
   }
 
   /** Custom adapter for displaying an array of Planet objects. */
-  private static class PlanetArrayAdapter extends ArrayAdapter<newUserModel> {
+  private static class FriendsArrayAdapter extends ArrayAdapter<newUserModel> {
 
     private LayoutInflater inflater;
 
-    public PlanetArrayAdapter( Context context, List<newUserModel> planetList ) {
+    public FriendsArrayAdapter( Context context, List<newUserModel> planetList ) {
       super( context, R.layout.simplerow, R.id.rowTextView, planetList );
       // Cache the LayoutInflate to avoid asking for a new one each time.
       inflater = LayoutInflater.from(context) ;
