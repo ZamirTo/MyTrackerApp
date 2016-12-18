@@ -16,7 +16,9 @@ import java.util.Random;
 public class QRGeneratorActivity extends Activity {
     ImageView qrCodeImageview;
     String QRcode;
-    public final static int WIDTH = 00;
+    public final static int WIDTH = 500;
+    public final static int HEIGHT = 500;
+    Bitmap bitmap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,7 +29,7 @@ public class QRGeneratorActivity extends Activity {
         Thread t = new Thread(new Runnable() {
             public void run() {
                 // this is the msg which will be encode in QRcode
-                QRcode="!@#$%^&*";
+                QRcode="#%7#%&#%&SDADFF";
                 System.out.println(QRcode);
                 try {
                     synchronized (this) {
@@ -37,7 +39,6 @@ public class QRGeneratorActivity extends Activity {
                             @Override
                             public void run() {
                                 try {
-                                    Bitmap bitmap = null;
                                     bitmap = encodeAsBitmap(QRcode);
                                     SaveImage(bitmap);
                                     qrCodeImageview.setImageBitmap(bitmap);
@@ -64,33 +65,29 @@ public class QRGeneratorActivity extends Activity {
         String root = Environment.getExternalStorageDirectory().toString();
         File myDir = new File(root + "/saved_images");
         myDir.mkdirs();
-        Random generator = new Random();
-        int n = 10000;
-        n = generator.nextInt(n);
-        String fname = "Image-"+ n +".jpg";
-        System.out.println(myDir.getAbsolutePath());
-        System.out.println("NUMBER:" + n);
-        File file = new File (myDir, fname);
-        //if (file.exists ()) file.delete ();
-        try {
-            FileOutputStream out = new FileOutputStream(file);
-            finalBitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
-            out.flush();
-            out.close();
+            Random generator = new Random();
+            int n = 10000;
+            n = generator.nextInt(n);
+            String fname = "Image-"+ n +".jpg";
+            File file = new File (myDir, fname);
+            //if (file.exists ()) file.delete ();
+            try {
+                FileOutputStream out = new FileOutputStream(file);
+                finalBitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
+                out.flush();
+                out.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
 
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     // this is method call from on create and return bitmap image of QRCode.
     Bitmap encodeAsBitmap(String str) throws WriterException {
         BitMatrix result;
         try {
-            result = new MultiFormatWriter().encode(str,
-                    BarcodeFormat.QR_CODE, WIDTH, WIDTH, null);
+            result = new MultiFormatWriter().encode(str, BarcodeFormat.QR_CODE, WIDTH, HEIGHT, null);
         } catch (IllegalArgumentException iae) {
-            // Unsupported format
             return null;
         }
         int w = result.getWidth();
@@ -105,5 +102,5 @@ public class QRGeneratorActivity extends Activity {
         Bitmap bitmap = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888);
         bitmap.setPixels(pixels, 0, 500, 0, 0, w, h);
         return bitmap;
-    } /// end of this method
+    }
 }

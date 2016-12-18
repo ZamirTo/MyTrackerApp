@@ -30,8 +30,7 @@ public class BLEActivity extends Activity {
     private ArrayList<BluetoothObject> modelItems;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ble);
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
@@ -51,6 +50,8 @@ public class BLEActivity extends Activity {
         button_scanBT.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                mainListView.setAdapter(null);
+                modelItems.clear();
                 startScanning();
             }
         });
@@ -85,10 +86,16 @@ public class BLEActivity extends Activity {
                     if(modelItems.size()==0)
                         modelItems.add(bluetoothObject);
                     else if(modelItems.size()!=0){
-                        for (int i = 0 ; i < modelItems.size() ; i++)
-                            if(!modelItems.get(i).getBluetooth_address().equals(bluetoothObject.getBluetooth_address())){
-                                modelItems.add(bluetoothObject);
+                        boolean addToArray = true;
+                        for (int i = 0 ; i < modelItems.size() ; i++) {
+                            if (modelItems.get(i).getBluetooth_address().equals(bluetoothObject.getBluetooth_address())) {
+                                addToArray = false;
+                                break;
                             }
+                        }
+                        if(addToArray){
+                            modelItems.add(bluetoothObject);
+                        }
                     }
                 }
             }
@@ -246,11 +253,10 @@ public class BLEActivity extends Activity {
             name.setText(bleDevice.getBluetooth_name());
             address.setText(bleDevice.getBluetooth_address());
             state.setText(bleDevice.getBluetooth_state()+"");
-            type.setText(bleDevice.getBluetooth_state()+"");
+            type.setText(bleDevice.getBluetooth_type()+"");
             RSSI.setText(bleDevice.getBluetooth_rssi()+"");
             return convertView;
         }
-
     }
 
 }//end MainActivity
