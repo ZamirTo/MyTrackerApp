@@ -12,12 +12,22 @@ import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
+import java.util.concurrent.Semaphore;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
     private String[] cords;
-    //private FirebaseAuth mAuth;
+    private FirebaseAuth mAuth;
+    private DatabaseReference mDatabase;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -26,11 +36,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-        //mAuth = FirebaseAuth.getInstance();
-        //System.out.println(mAuth.getCurrentUser().getEmail());
-
+        mAuth = FirebaseAuth.getInstance();
+        mDatabase = FirebaseDatabase.getInstance().getReference();
     }
-
 
     /**
      * Manipulates the map once available.
@@ -53,12 +61,13 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             boolean hasGpsCords = extBundle.containsKey("cords");
             boolean hasFriendsCords = extBundle.containsKey("fcords");
             if (hasGpsCords) {
-                System.out.println("im HERE");
                 cords = extBundle.getStringArray("cords");
-                LatLng position = new LatLng(Double.parseDouble(cords[0]), Double.parseDouble(cords[1]));
+                LatLng position = new LatLng(Double.parseDouble(cords[2]), Double.parseDouble(cords[3]));
                 mMap.addMarker(new MarkerOptions().position(position).title("You Are Here"));
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(position, 14));
                 // add update to the user location as string : cords1,cords2;
+                mDatabase = mDatabase.getRoot().child("Users").child(cords[1]);
+                mDatabase.setValue(new newUser(cords[0],mAuth.getCurrentUser().getEmail(),cords[2]+","+cords[3],"User"));
             }
             else if(hasFriendsCords){
                 cords = extBundle.getStringArray("fcords");

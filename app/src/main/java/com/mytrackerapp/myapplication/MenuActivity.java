@@ -17,7 +17,6 @@ import android.location.LocationManager;
 import android.os.Build;
 import android.provider.Settings;
 import android.widget.Button;
-
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -37,6 +36,8 @@ public class MenuActivity extends AppCompatActivity implements ZXingScannerView.
     private ZXingScannerView mScannerView;
     final private int REQUEST_PERMISSIONS = 1;
     private ArrayList<QR> modelItems;
+    private String userKey;
+    private String userName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,14 +47,26 @@ public class MenuActivity extends AppCompatActivity implements ZXingScannerView.
         mDatabase = mDatabase.getRoot().child("QR Tags");
         gpsBtn = (Button) findViewById(R.id.gpsBtn);
         modelItems = new ArrayList<QR>();
-
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
+
+        Intent intent = getIntent();
+        Bundle extBundle = intent.getExtras();
+        if(!extBundle.isEmpty()) {
+            String[] cords;
+            boolean hasGpsCords = extBundle.containsKey("key");
+            if (hasGpsCords) {
+                cords = extBundle.getStringArray("key");
+                userName = cords[0];
+                userKey = cords[1];
+            }
+        }
+
         listener = new LocationListener() {
             @Override
             public void onLocationChanged(Location location) {
                 Intent intentBundle = new Intent(MenuActivity.this,MapsActivity.class);
                 Bundle bundle = new Bundle();
-                String[] cords = {location.getLatitude()+"",location.getLongitude()+""};
+                String[] cords = {userName,userKey,location.getLatitude()+"",location.getLongitude()+""};
                 bundle.putStringArray("cords", cords);
                 intentBundle.putExtras(bundle);
                 startActivity(intentBundle);
@@ -86,7 +99,7 @@ public class MenuActivity extends AppCompatActivity implements ZXingScannerView.
 
             }
         });
-        //System.out.println("YOU ARE: "+ mAuth.getCurrentUser().getEmail());
+
         configure_button();
     }
 
@@ -167,7 +180,7 @@ public class MenuActivity extends AppCompatActivity implements ZXingScannerView.
             if(modelItems.get(i).getID().equals(result.getText())){
                 Intent intentBundle = new Intent(MenuActivity.this,MapsActivity.class);
                 Bundle bundle = new Bundle();
-                String[] cords = {modelItems.get(i).getCordinate1()+"",modelItems.get(i).getCordinate2()+""};
+                String[] cords = {userName,userKey,modelItems.get(i).getCordinate1()+"",modelItems.get(i).getCordinate2()+""};
                 bundle.putStringArray("cords", cords);
                 intentBundle.putExtras(bundle);
                 startActivity(intentBundle);
