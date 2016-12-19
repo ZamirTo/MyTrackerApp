@@ -1,15 +1,14 @@
 package com.mytrackerapp.myapplication;
 
 import android.Manifest;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.support.v4.app.ActivityCompat;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.Menu;
 import android.view.View;
 import android.location.Location;
 import android.location.LocationListener;
@@ -17,23 +16,36 @@ import android.location.LocationManager;
 import android.os.Build;
 import android.provider.Settings;
 import android.widget.Button;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.zxing.Result;
+
+import java.util.ArrayList;
+
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
+
 
 public class MenuActivity extends AppCompatActivity implements ZXingScannerView.ResultHandler{
 
+    private DatabaseReference mDatabase;
     private Button gpsBtn;
     private LocationManager locationManager;
     private LocationListener listener;
     private ZXingScannerView mScannerView;
     final private int REQUEST_PERMISSIONS = 1;
+    private ArrayList<QR> modelItems;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu);
+        mDatabase = FirebaseDatabase.getInstance().getReference();
+        mDatabase.getRoot().child("QR");
         gpsBtn = (Button) findViewById(R.id.gpsBtn);
-        //configure_button();
+        modelItems = new ArrayList<QR>();
 
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         listener = new LocationListener() {
@@ -41,7 +53,7 @@ public class MenuActivity extends AppCompatActivity implements ZXingScannerView.
             public void onLocationChanged(Location location) {
                 Intent intentBundle = new Intent(MenuActivity.this,MapsActivity.class);
                 Bundle bundle = new Bundle();
-                String[] cords = {location.getLongitude()+"",location.getLatitude()+""};
+                String[] cords = {location.getLatitude()+"",location.getLongitude()+""};
                 bundle.putStringArray("cords", cords);
                 intentBundle.putExtras(bundle);
                 startActivity(intentBundle);
@@ -60,6 +72,8 @@ public class MenuActivity extends AppCompatActivity implements ZXingScannerView.
                 startActivity(i);
             }
         };
+
+
         configure_button();
     }
 
@@ -96,17 +110,18 @@ public class MenuActivity extends AppCompatActivity implements ZXingScannerView.
         // first check for permissions
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
                 ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-                ActivityCompat.checkSelfPermission(this,Manifest.permission.CAMERA)!= PackageManager.PERMISSION_GRANTED &&
-                ActivityCompat.checkSelfPermission(this,Manifest.permission.BLUETOOTH) != PackageManager.PERMISSION_GRANTED &&
-                ActivityCompat.checkSelfPermission(this,Manifest.permission.BLUETOOTH_ADMIN)!=PackageManager.PERMISSION_GRANTED &&
-                ActivityCompat.checkSelfPermission(this,Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.checkSelfPermission(this,Manifest.permission.CAMERA)!= PackageManager.PERMISSION_GRANTED){
+                //ActivityCompat.checkSelfPermission(this,Manifest.permission.BLUETOOTH) != PackageManager.PERMISSION_GRANTED &&
+                //ActivityCompat.checkSelfPermission(this,Manifest.permission.BLUETOOTH_ADMIN)!=PackageManager.PERMISSION_GRANTED &&
+                //ActivityCompat.checkSelfPermission(this,Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 requestPermissions(new String[]{Manifest.permission.CAMERA,
-                        Manifest.permission.ACCESS_COARSE_LOCATION ,
-                        Manifest.permission.ACCESS_FINE_LOCATION,
-                        Manifest.permission.INTERNET,
-                        Manifest.permission.BLUETOOTH,
-                        Manifest.permission.BLUETOOTH_ADMIN}
+                                Manifest.permission.ACCESS_COARSE_LOCATION,
+                                Manifest.permission.ACCESS_FINE_LOCATION}
+                                //Manifest.permission.INTERNET,
+                                //Manifest.permission.BLUETOOTH,
+                                //Manifest.permission.BLUETOOTH_ADMIN}
+
                         ,REQUEST_PERMISSIONS);
             }
             return;
@@ -135,22 +150,37 @@ public class MenuActivity extends AppCompatActivity implements ZXingScannerView.
     }
 
     @Override
-    public void handleResult(Result result) {
-        Log.e("handler", result.getText());
-        Log.e("handle", result.getBarcodeFormat().toString());
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Scan Result");
-        builder.setMessage(result.getText());
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener(){
+    public void handleResult(final Result result) {
+        mDatabase.addValueEventListener(new ValueEventListener() {
             @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                Log.e("ResultClick", "" + i);
-                dialogInterface.dismiss();
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                final long[] pendingLoadCount = { dataSnapshot.getChildrenCount() };
+                int index = 0;
+                for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
+                    QR post = postSnapshot.getValue(QR.class);
+                    modelItems.add(new QR(post.getID(), post.getCordinate1(), post.getCordinate2()));
+                    System.out.println("QR DONE");
+                    pendingLoadCount[0] = pendingLoadCount[0] - 1;
+                    System.out.println("IM PENDING COUNT"+pendingLoadCount[0]);
+                    if(pendingLoadCount[0] == 0){
+                        for (int i = 0; i < modelItems.size(); i++) {
+                            System.out.println(modelItems.get(i).getID());
+                            if(modelItems.get(i).getID().equals(result.getBarcodeFormat().toString())){
+                                Intent intentBundle = new Intent(MenuActivity.this,MapsActivity.class);
+                                Bundle bundle = new Bundle();
+                                String[] cords = {modelItems.get(i).getCordinate1()+"",modelItems.get(i).getCordinate2()+""};
+                                bundle.putStringArray("cords", cords);
+                                intentBundle.putExtras(bundle);
+                                startActivity(intentBundle);
+                            }
+                        }
+                    }
+                }
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
 
             }
         });
-        AlertDialog alert1 = builder.create();
-        alert1.show();
-        startActivity(new Intent(this,MenuActivity.class));
     }
 }
