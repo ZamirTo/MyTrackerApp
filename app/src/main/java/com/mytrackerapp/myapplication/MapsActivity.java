@@ -11,12 +11,13 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.firebase.auth.FirebaseAuth;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
     private GoogleMap mMap;
     private String[] cords;
-
+    //private FirebaseAuth mAuth;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -25,6 +26,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+        //mAuth = FirebaseAuth.getInstance();
+        //System.out.println(mAuth.getCurrentUser().getEmail());
+
     }
 
 
@@ -54,6 +58,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 LatLng position = new LatLng(Double.parseDouble(cords[0]), Double.parseDouble(cords[1]));
                 mMap.addMarker(new MarkerOptions().position(position).title("You Are Here"));
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(position, 14));
+                // add update to the user location as string : cords1,cords2;
             }
             else if(hasFriendsCords){
                 cords = extBundle.getStringArray("fcords");

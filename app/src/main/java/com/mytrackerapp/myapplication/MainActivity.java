@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -13,8 +14,13 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
     private DatabaseReference mDatabase;
@@ -24,16 +30,22 @@ public class MainActivity extends AppCompatActivity {
     private EditText usernameInputText;
     private EditText emailInputText;
     private EditText passwordInputText;
+    private ArrayList<newUser> modelItems;
+    private Button loginBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        modelItems = new ArrayList<newUser>();
         emailInputText = (EditText) findViewById(R.id.email_input_Text);
         passwordInputText = (EditText) findViewById(R.id.password_input_text);
         usernameInputText = (EditText) findViewById(R.id.username_input_text);
+        loginBtn = (Button)findViewById(R.id.login_button);
+        loginBtn.setEnabled(false);
         mDatabase = FirebaseDatabase.getInstance().getReference();
+        mDatabase = mDatabase.getRoot().child("Users");
 
         mAuth = FirebaseAuth.getInstance();
         mAuthListener = new FirebaseAuth.AuthStateListener() {
@@ -49,6 +61,21 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         };
+        mDatabase.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
+                    newUser post = postSnapshot.getValue(newUser.class);
+                    modelItems.add(new newUser(post.getName(),post.getEmail(),post.getLocation(),post.getPermission()));
+                    System.out.println("DONE");
+                    loginBtn.setEnabled(true);
+                }
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 
     @Override
@@ -85,7 +112,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void loginBtnClicked(View v){
         if(validateForm()) {
-            String email = emailInputText.getText().toString();
+            final String email = emailInputText.getText().toString();
             String password = passwordInputText.getText().toString();
             mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                 @Override
@@ -94,7 +121,18 @@ public class MainActivity extends AppCompatActivity {
                         Toast.makeText(MainActivity.this, "Wrong email or password", Toast.LENGTH_SHORT).show();
                     } else {
                         Toast.makeText(MainActivity.this, "You are loged in successfully", Toast.LENGTH_SHORT).show();
-                        startActivity(new Intent(getApplicationContext(),MenuActivity.class));
+                        for (int i = 0 ; i < modelItems.size() ; i++) {
+                            if(modelItems.get(i).getEmail().equals(email) && modelItems.get(i).getPermission().equals("User")){
+                                startActivity(new Intent(getApplicationContext(),MenuActivity.class));
+                            }
+                            else if(modelItems.get(i).getEmail().equals(email) && modelItems.get(i).getPermission().equals("Tech")){
+                                //tech ACTIVITYS
+                                System.out.println("TECH");
+                            } else if(modelItems.get(i).getEmail().equals(email) && modelItems.get(i).getPermission().equals("Admin")){
+                                //admin ACTIVITY
+                                System.out.println("Admin");
+                            }
+                        }
                     }
                 }
             });
@@ -116,7 +154,9 @@ public class MainActivity extends AppCompatActivity {
                         temp.setName(usernameInputText.getText().toString());
                         temp.setEmail(emailInputText.getText().toString());
                         temp.setLocation("0,0");
+                        temp.setPermission("User");
                         mDatabase.child("Users").push().setValue(temp);
+                        startActivity(new Intent(getApplicationContext(),MenuActivity.class));
                     }
                 }
             });

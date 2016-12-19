@@ -3,6 +3,7 @@ package com.mytrackerapp.myapplication;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -16,20 +17,19 @@ import android.location.LocationManager;
 import android.os.Build;
 import android.provider.Settings;
 import android.widget.Button;
+
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.zxing.Result;
-
 import java.util.ArrayList;
 
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
 
 
 public class MenuActivity extends AppCompatActivity implements ZXingScannerView.ResultHandler{
-
     private DatabaseReference mDatabase;
     private Button gpsBtn;
     private LocationManager locationManager;
@@ -72,7 +72,6 @@ public class MenuActivity extends AppCompatActivity implements ZXingScannerView.
                 startActivity(i);
             }
         };
-
         mDatabase.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -87,7 +86,7 @@ public class MenuActivity extends AppCompatActivity implements ZXingScannerView.
 
             }
         });
-
+        //System.out.println("YOU ARE: "+ mAuth.getCurrentUser().getEmail());
         configure_button();
     }
 

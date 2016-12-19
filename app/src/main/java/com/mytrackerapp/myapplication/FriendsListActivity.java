@@ -41,7 +41,6 @@ public class FriendsListActivity extends Activity {
     modelItems = new ArrayList<newUserModel>();
     // Find the ListView resource.
     mainListView = (ListView) findViewById( R.id.mainListView );
-
     mDatabase.addValueEventListener(new ValueEventListener() {
       @Override
       public void onDataChange(DataSnapshot dataSnapshot) {
