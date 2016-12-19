@@ -121,7 +121,7 @@ public class MainActivity extends AppCompatActivity {
                         Toast.makeText(MainActivity.this, "Wrong email or password", Toast.LENGTH_SHORT).show();
                     } else {
                         for (int i = 0 ; i < modelItems.size() ; i++) {
-                            if(modelItems.get(i).getEmail().equals(mAuth.getCurrentUser().getEmail()) && modelItems.get(i).getPermission().equals("User")){
+                            if(modelItems.get(i).getEmail().toLowerCase().equals(mAuth.getCurrentUser().getEmail()) && modelItems.get(i).getPermission().equals("User")){
                                 Toast.makeText(MainActivity.this, "You are loged in successfully", Toast.LENGTH_SHORT).show();
                                 Intent intentBundle = new Intent(MainActivity.this,MenuActivity.class);
                                 Bundle bundle = new Bundle();
@@ -154,6 +154,14 @@ public class MainActivity extends AppCompatActivity {
                         Toast.makeText(MainActivity.this, "Cannot connect to server",Toast.LENGTH_SHORT).show();
                     }
                     else {
+                        /*for (int i = 0 ; i < 50 ; i++){
+                            newUser temp = new newUser();
+                            temp.setName(usernameInputText.getText().toString()+i);
+                            temp.setEmail(emailInputText.getText().toString()+i);
+                            temp.setLocation("0,0");
+                            temp.setPermission("User");
+                            mDatabase.getRoot().child("Users").push().setValue(temp);
+                        }*/
                         newUser temp = new newUser();
                         temp.setName(usernameInputText.getText().toString());
                         temp.setEmail(emailInputText.getText().toString());
