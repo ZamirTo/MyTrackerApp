@@ -38,11 +38,14 @@ public class MenuActivity extends AppCompatActivity implements ZXingScannerView.
     private ArrayList<QR> modelItems;
     private String userKey;
     private String userName;
+    private Button qrBtn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu);
+        qrBtn = (Button)findViewById(R.id.qrBtn);
+        qrBtn.setEnabled(false);
         mDatabase = FirebaseDatabase.getInstance().getReference();
         mDatabase = mDatabase.getRoot().child("QR Tags");
         gpsBtn = (Button) findViewById(R.id.gpsBtn);
@@ -92,6 +95,7 @@ public class MenuActivity extends AppCompatActivity implements ZXingScannerView.
                     QR post = postSnapshot.getValue(QR.class);
                     modelItems.add(new QR(post.getID(), post.getCordinate1(), post.getCordinate2()));
                     System.out.println("QR DONE");
+                    qrBtn.setEnabled(true);
                 }
             }
             @Override

@@ -11,6 +11,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -27,6 +28,8 @@ public class FriendsListActivity extends Activity {
   private newUserModel[] friendsList;
   private ArrayAdapter<newUserModel> listAdapter ;
   private DatabaseReference mDatabase;
+  private Button getFriendListBtn;
+  private Button getFriendsLocation;
   private ArrayList<newUserModel> modelItems;
 
 
@@ -36,6 +39,10 @@ public class FriendsListActivity extends Activity {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.main);
 
+    getFriendListBtn = (Button)findViewById(R.id.getFriendsLocationBtn);
+    getFriendListBtn.setEnabled(false);
+    getFriendListBtn = (Button)findViewById(R.id.getFriendsListBtn);
+    getFriendListBtn.setEnabled(false);
     mDatabase = FirebaseDatabase.getInstance().getReference();
     mDatabase = mDatabase.getRoot().child("Users");
     modelItems = new ArrayList<newUserModel>();
@@ -48,6 +55,7 @@ public class FriendsListActivity extends Activity {
           newUser post = postSnapshot.getValue(newUser.class);
           modelItems.add(new newUserModel(post.getName(),post.getLocation(),false));
           System.out.println("DONE");
+          getFriendListBtn.setEnabled(true);
         }
       }
       @Override
@@ -74,6 +82,7 @@ public class FriendsListActivity extends Activity {
       // Set our custom array adapter as the ListView's adapter.
       listAdapter = new FriendsArrayAdapter(this, modelItems);
       mainListView.setAdapter(listAdapter);
+      getFriendsLocation.setEnabled(true);
     }
   }
 
@@ -88,6 +97,8 @@ public class FriendsListActivity extends Activity {
           counterCheck++;
         }
       }
+      if(counterCheck == 0)
+        return;
       String[] cords = new String[counterCheck*2];
       for (int i = 0; i < listAdapter.getCount(); i++) {
         if (listAdapter.getItem(i).isChecked()) {

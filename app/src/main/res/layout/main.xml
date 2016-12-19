@@ -1,20 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-  android:orientation="vertical"
+	xmlns:tools="http://schemas.android.com/tools"
+	android:orientation="vertical"
   android:layout_width="fill_parent"
   android:layout_height="fill_parent">
 	<Button
 		android:text="Get Friends Location"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:id="@+id/button4"
-		android:onClick="onClickChecked" />
+		android:id="@+id/getFriendsLocationBtn"
+		android:onClick="onClickChecked"
+		android:enabled="true" />
 
 	<Button
 		android:text="Get Friends List"
 		android:layout_width="match_parent"
 		android:layout_height="wrap_content"
-		android:id="@+id/button5"
+		android:id="@+id/getFriendsListBtn"
 		android:onClick="onClickFriends" />
 
 	<ListView android:layout_width="fill_parent" 
