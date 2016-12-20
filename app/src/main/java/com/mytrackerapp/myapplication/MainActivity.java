@@ -66,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
                     newUser post = postSnapshot.getValue(newUser.class);
-                    modelItems.add(new newUser(post.getName(),post.getEmail(),post.getLocation(),post.getPermission()));
+                    modelItems.add(new newUser(post.getName(),post.getEmail(),postSnapshot.getKey(),post.getPermission()));
                     System.out.println("DONE");
                     loginBtn.setEnabled(true);
                 }
@@ -120,12 +120,16 @@ public class MainActivity extends AppCompatActivity {
                     if (!task.isSuccessful()) {
                         Toast.makeText(MainActivity.this, "Wrong email or password", Toast.LENGTH_SHORT).show();
                     } else {
-                        Toast.makeText(MainActivity.this, "You are loged in successfully", Toast.LENGTH_SHORT).show();
                         for (int i = 0 ; i < modelItems.size() ; i++) {
-                            if(modelItems.get(i).getEmail().equals(email) && modelItems.get(i).getPermission().equals("User")){
-                                startActivity(new Intent(getApplicationContext(),MenuActivity.class));
-                            }
-                            else if(modelItems.get(i).getEmail().equals(email) && modelItems.get(i).getPermission().equals("Tech")){
+                            if(modelItems.get(i).getEmail().toLowerCase().equals(mAuth.getCurrentUser().getEmail()) && modelItems.get(i).getPermission().equals("User")){
+                                Toast.makeText(MainActivity.this, "You are loged in successfully", Toast.LENGTH_SHORT).show();
+                                Intent intentBundle = new Intent(MainActivity.this,MenuActivity.class);
+                                Bundle bundle = new Bundle();
+                                String[] cords = {modelItems.get(i).getName(),modelItems.get(i).getLocation()};
+                                bundle.putStringArray("key", cords);
+                                intentBundle.putExtras(bundle);
+                                startActivity(intentBundle);
+                            } else if(modelItems.get(i).getEmail().equals(email) && modelItems.get(i).getPermission().equals("Tech")){
                                 //tech ACTIVITYS
                                 System.out.println("TECH");
                             } else if(modelItems.get(i).getEmail().equals(email) && modelItems.get(i).getPermission().equals("Admin")){
@@ -150,13 +154,22 @@ public class MainActivity extends AppCompatActivity {
                         Toast.makeText(MainActivity.this, "Cannot connect to server",Toast.LENGTH_SHORT).show();
                     }
                     else {
+                        /*for (int i = 0 ; i < 50 ; i++){
+                            newUser temp = new newUser();
+                            temp.setName(usernameInputText.getText().toString()+i);
+                            temp.setEmail(emailInputText.getText().toString()+i);
+                            temp.setLocation("0,0");
+                            temp.setPermission("User");
+                            mDatabase.getRoot().child("Users").push().setValue(temp);
+                        }*/
                         newUser temp = new newUser();
                         temp.setName(usernameInputText.getText().toString());
                         temp.setEmail(emailInputText.getText().toString());
                         temp.setLocation("0,0");
                         temp.setPermission("User");
-                        mDatabase.child("Users").push().setValue(temp);
-                        startActivity(new Intent(getApplicationContext(),MenuActivity.class));
+                        mDatabase.getRoot().child("Users").push().setValue(temp);
+                        startActivity(new Intent(MainActivity.this ,MainActivity.class));
+                        Toast.makeText(MainActivity.this, "You have been regestered please logins",Toast.LENGTH_SHORT).show();
                     }
                 }
             });

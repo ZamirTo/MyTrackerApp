@@ -16,11 +16,11 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity" >
-        <intent-filter>
-            <action android:name="android.intent.action.MAIN" />
-            <category android:name="android.intent.category.LAUNCHER" />
-        </intent-filter>
+        <activity android:name=".MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
         <activity android:name=".FriendsListActivity" />
         <activity android:name=".MenuActivity" />
@@ -36,12 +36,13 @@
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyA1Fh0AqjXTjjMwi0BStQ7ryokCeAQEG_Y" />
+
         <activity
             android:name=".MapsActivity"
             android:label="@string/title_activity_maps" />
         <activity android:name=".BLEActivity" />
-
-        <activity android:name=".QRGeneratorActivity">
+        <activity android:name=".QRGeneratorActivity"></activity>
+        <activity android:name=".AdminActivity">
 
         </activity>
     </application>
