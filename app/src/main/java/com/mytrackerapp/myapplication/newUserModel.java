@@ -4,6 +4,7 @@ public class newUserModel{
     private String name;
     private boolean checked = false;
     private String cordinates;
+    private String email;
 
     public newUserModel(){}
     public newUserModel(String _name){
@@ -12,6 +13,12 @@ public class newUserModel{
     public newUserModel(String name, boolean check){
         this.name = name;
         this.checked = check;
+    }
+    public newUserModel(String name, String cordinates, boolean check, String email){
+        this.name = name;
+        this.checked = check;
+        this.cordinates = cordinates;
+        this.email = email;
     }
     public newUserModel(String name, String cordinates, boolean check){
         this.name = name;
@@ -41,5 +48,11 @@ public class newUserModel{
     }
     public void toggleChecked() {
         checked = !checked ;
+    }
+    public String getEmail(){
+        return email;
+    }
+    public void setEmail(String email){
+        this.email = email;
     }
 }

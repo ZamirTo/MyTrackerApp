@@ -17,10 +17,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".MainActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+
         </activity>
         <activity android:name=".FriendsListActivity" />
         <activity android:name=".MenuActivity" />
@@ -43,7 +40,10 @@
         <activity android:name=".BLEActivity" />
         <activity android:name=".QRGeneratorActivity"></activity>
         <activity android:name=".AdminActivity">
-
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
     </application>
 

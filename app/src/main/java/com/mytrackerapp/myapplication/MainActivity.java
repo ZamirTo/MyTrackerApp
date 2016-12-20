@@ -131,7 +131,7 @@ public class MainActivity extends AppCompatActivity {
                                 startActivity(intentBundle);
                             } else if(modelItems.get(i).getEmail().equals(email) && modelItems.get(i).getPermission().equals("Tech")){
                                 //tech ACTIVITYS
-                                System.out.println("TECH");
+                                System.out.println("Tech");
                             } else if(modelItems.get(i).getEmail().equals(email) && modelItems.get(i).getPermission().equals("Admin")){
                                 //admin ACTIVITY
                                 System.out.println("Admin");

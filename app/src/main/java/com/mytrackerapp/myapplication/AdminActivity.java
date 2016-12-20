@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -28,10 +29,19 @@ public class AdminActivity extends AppCompatActivity {
     private ArrayAdapter<newBLEModel> listAdapter3 ;
     private DatabaseReference mDatabase;
     private ArrayList<newUserModel> modelItems;
-    private ArrayList<newUserModel> modelItemsAfterDelete;
+    private ArrayList<newUserModel> modelItemsToDelete;
+    private ArrayList<newUserModel> modelItemsToPromote;
     private ArrayList<newQRModel> qrItems;
+    private ArrayList<newQRModel> qrItemsToDelete;
     private ArrayList<newBLEModel> bleItems;
+    private ArrayList<newBLEModel> bletemsToDelete;
     private int whatAdapterIsSet;
+    private Button getUsers;
+    private Button getQRs;
+    private Button getBLEs;
+    private Button getCommit;
+    private Button getDelet;
+    private Button getPromote;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -39,8 +49,24 @@ public class AdminActivity extends AppCompatActivity {
         setContentView(R.layout.activity_admin);
         mainListView = (ListView) findViewById( R.id.mainListViewAdmin );
         whatAdapterIsSet = 0;
+        getUsers = (Button)findViewById(R.id.getUsersBtn);
+        getQRs = (Button)findViewById(R.id.getQRSBtn);
+        getBLEs = (Button)findViewById(R.id.getBLESBtn);
+        getCommit = (Button)findViewById(R.id.commitBtn);
+        getDelet = (Button)findViewById(R.id.removeFromDBBtn);
+        getPromote = (Button)findViewById(R.id.makeTechiBtn);
 
-        modelItemsAfterDelete = new ArrayList<newUserModel>();
+        getUsers.setEnabled(false);
+        getQRs.setEnabled(false);
+        getBLEs.setEnabled(false);
+        getCommit.setEnabled(false);
+        getDelet.setEnabled(false);
+        getPromote.setEnabled(false);
+
+        modelItemsToPromote = new ArrayList<newUserModel>();
+        bletemsToDelete = new ArrayList<newBLEModel>();
+        qrItemsToDelete = new ArrayList<newQRModel>();
+        modelItemsToDelete = new ArrayList<newUserModel>();
         qrItems = new ArrayList<newQRModel>();
         bleItems = new ArrayList<newBLEModel>();
         modelItems = new ArrayList<newUserModel>();
@@ -51,10 +77,10 @@ public class AdminActivity extends AppCompatActivity {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot postSnapshot: dataSnapshot.getChildren()) {
                     newUser post = postSnapshot.getValue(newUser.class);
-                    modelItems.add(new newUserModel(post.getName(),postSnapshot.getKey(),false));
+                    modelItems.add(new newUserModel(post.getName(),postSnapshot.getKey(),false,post.getEmail()));
                     System.out.println("Done Users");
+                    getUsers.setEnabled(true);
                 }
-                mDatabase.removeEventListener(this);
             }
             @Override
             public void onCancelled(DatabaseError databaseError) {
@@ -70,8 +96,8 @@ public class AdminActivity extends AppCompatActivity {
                     QR post = postSnapshot.getValue(QR.class);
                     qrItems.add(new newQRModel(post.getID(),postSnapshot.getKey(),false));
                     System.out.println("Done QRs");
+                    getQRs.setEnabled(true);
                 }
-                mDatabase.removeEventListener(this);
             }
             @Override
             public void onCancelled(DatabaseError databaseError) {
@@ -87,8 +113,8 @@ public class AdminActivity extends AppCompatActivity {
                     BLE post = postSnapshot.getValue(BLE.class);
                     bleItems.add(new newBLEModel(post.getMacAddress(),postSnapshot.getKey(),false));
                     System.out.println("Done BELs");
+                    getBLEs.setEnabled(true);
                 }
-                mDatabase.removeEventListener(this);
             }
             @Override
             public void onCancelled(DatabaseError databaseError) {
@@ -114,6 +140,8 @@ public class AdminActivity extends AppCompatActivity {
             listAdapter = new AdminActivity.UsersArrayAdapter(this, modelItems);
             mainListView.setAdapter(listAdapter);
             whatAdapterIsSet = 1;
+            getDelet.setEnabled(true);
+            getPromote.setEnabled(true);
         }
     }
 
@@ -134,6 +162,8 @@ public class AdminActivity extends AppCompatActivity {
             listAdapter2 = new AdminActivity.QRsArrayAdapter(this, qrItems);
             mainListView.setAdapter(listAdapter2);
             whatAdapterIsSet = 2;
+            getDelet.setEnabled(true);
+            getPromote.setEnabled(false);
         }
     }
 
@@ -154,6 +184,8 @@ public class AdminActivity extends AppCompatActivity {
             listAdapter3 = new AdminActivity.BLEsArrayAdapter(this, bleItems);
             mainListView.setAdapter(listAdapter3);
             whatAdapterIsSet = 3;
+            getDelet.setEnabled(true);
+            getPromote.setEnabled(false);
         }
     }
 
@@ -225,27 +257,31 @@ public class AdminActivity extends AppCompatActivity {
         }
     }
 
+    public void onPromoteClicked(View v){
+        int size = listAdapter.getCount();
+        for (int i = 0; i < size; i++) {
+            if (listAdapter.getItem(i).isChecked()) {
+                modelItemsToPromote.add(modelItems.get(i));
+            }
+        }
+    }
+
     public void onClickRemove(View v){
+        getCommit.setEnabled(true);
         if(whatAdapterIsSet == 1) {
-            mainListView.setOnItemClickListener(null);
             int size = listAdapter.getCount();
             for (int i = 0; i < size; i++) {
                 if (listAdapter.getItem(i).isChecked()) {
-                    for (int j = 0 ; j < modelItems.size() ; j++){
-                        if(i!=j) {
-                            modelItemsAfterDelete.add(modelItems.get(i));
-                        }
-                    }
-                    mDatabase.getRoot().child("Users").child(modelItems.get(i).getCordinates()).removeValue();
-                    //modelItems.remove(i);
-                    //size = modelItems.size();
-                    //i = -1;
+                    modelItemsToDelete.add(modelItems.get(i));
+                    modelItems.remove(i);
+                    size = modelItems.size();
+                    i = -1;
                 }
             }
             mainListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
-                public void onItemClick( AdapterView<?> parent, View item,
-                                         int position, long id) {
+                public void onItemClick(AdapterView<?> parent, View item,
+                                        int position, long id) {
                     newUserModel friend = listAdapter.getItem(position);
                     friend.toggleChecked();
                     AdminActivity.userViewHolder viewHolder = (AdminActivity.userViewHolder) item.getTag();
@@ -253,9 +289,85 @@ public class AdminActivity extends AppCompatActivity {
                 }
             });
             // Set our custom array adapter as the ListView's adapter.
-            listAdapter = new AdminActivity.UsersArrayAdapter(this, modelItemsAfterDelete);
+            listAdapter = new AdminActivity.UsersArrayAdapter(this, modelItems);
             mainListView.setAdapter(listAdapter);
         }
+        else if(whatAdapterIsSet == 2) {
+            mainListView.setOnItemClickListener(null);
+            int size = listAdapter2.getCount();
+            for (int i = 0; i < size; i++) {
+                if (listAdapter2.getItem(i).isChecked()) {
+                    qrItemsToDelete.add(qrItems.get(i));
+                    qrItems.remove(i);
+                    size = qrItems.size();
+                    i = -1;
+                }
+            }
+            mainListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick( AdapterView<?> parent, View item,
+                                         int position, long id) {
+                    newQRModel qr = listAdapter2.getItem(position);
+                    qr.toggleChecked();
+                    AdminActivity.qrViewHolder viewHolder = (AdminActivity.qrViewHolder) item.getTag();
+                    viewHolder.getCheckBox().setChecked(qr.isChecked());
+                }
+            });
+            // Set our custom array adapter as the ListView's adapter.
+            listAdapter2 = new AdminActivity.QRsArrayAdapter(this, qrItems);
+            mainListView.setAdapter(listAdapter2);
+        }
+        else if(whatAdapterIsSet == 3) {
+            mainListView.setOnItemClickListener(null);
+            int size = listAdapter3.getCount();
+            for (int i = 0; i < size; i++) {
+                if (listAdapter3.getItem(i).isChecked()) {
+                    bletemsToDelete.add(bleItems.get(i));
+                    bleItems.remove(i);
+                    size = bleItems.size();
+                    i = -1;
+                }
+            }
+            mainListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick( AdapterView<?> parent, View item,
+                                         int position, long id) {
+                    newBLEModel ble = listAdapter3.getItem(position);
+                    ble.toggleChecked();
+                    AdminActivity.bleViewHolder viewHolder = (AdminActivity.bleViewHolder) item.getTag();
+                    viewHolder.getCheckBox().setChecked(ble.isChecked());
+                }
+            });
+            // Set our custom array adapter as the ListView's adapter.
+            listAdapter3 = new AdminActivity.BLEsArrayAdapter(this, bleItems);
+            mainListView.setAdapter(listAdapter3);
+        }
+    }
+
+    public void onCommitClicked(View v){
+        getCommit.setEnabled(false);
+        int size = modelItemsToDelete.size();
+        int size2 = qrItemsToDelete.size();
+        int size3 = bletemsToDelete.size();
+        int size4 = modelItemsToPromote.size();
+        System.out.println("IM SIZE4" + size4);
+        for (int i = 0 ; i < size4; i++){
+            System.out.println(modelItemsToPromote.get(i).getCordinates());
+            System.out.println(modelItemsToPromote.get(i).getName());
+            System.out.println(modelItems.get(i).getEmail());
+            mDatabase.getRoot().child("Users").child(modelItemsToPromote.get(i).getCordinates())
+                    .setValue(new newUser(modelItemsToPromote.get(i).getName(),modelItems.get(i).getEmail(),"0,0","Tech"));
+        }
+        for (int i = 0 ; i < size ; i++){
+            mDatabase.getRoot().child("Users").child(modelItemsToDelete.get(i).getCordinates()).removeValue();
+        }
+        for (int i = 0 ; i < size2 ; i++){
+            mDatabase.getRoot().child("QR Tags").child(qrItemsToDelete.get(i).getCordinates()).removeValue();
+        }
+        for (int i = 0 ; i < size3 ; i++){
+            mDatabase.getRoot().child("BLE Tags").child(bletemsToDelete.get(i).getCordinates()).removeValue();
+        }
+        startActivity(new Intent(this,AdminActivity.class));
     }
 
     /** Custom adapter for displaying an array of Friends objects. */
