@@ -28,43 +28,58 @@ public class TechMenuActivity extends AppCompatActivity {
     private LocationManager locationManager;
     private LocationListener listener;
     private static Map<Integer, String> hash;
-
-    Button addQR;
-
+    private Button addQR;
+    private Button addBLE;
     private String hashLocation;
     private double lat, lon;
+    private String button;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tech_menu);
         mDatabase = FirebaseDatabase.getInstance().getReference();
+        button = "";
         hash = initHash();
         addQR = (Button) findViewById(R.id.addQRbtn);
+        addBLE = (Button)findViewById(R.id.addBlebtn);
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
         listener = new LocationListener() {
             @Override
             public void onLocationChanged(Location location) {
-                System.out.println("Location changed");
-                Intent intentBundle = new Intent(TechMenuActivity.this, QRGeneratorActivity.class);
-                Bundle bundle = new Bundle();
-                lat = location.getLatitude();
-                lon = location.getLongitude();
-                System.out.println("Lat: " + lat);
-                System.out.println("Lon: " + lon);
-                String hashLat = hashCord(lat);
-                String hashLon = hashCord(lon);
-                hashLocation = hashLat + hashLon;
-                String[] cords = {hashLat, hashLon};
-                System.out.println("Hahs Lat :" + hashLat);
-                System.out.println("Hahs Lon :" + hashLon);
-                mDatabase = mDatabase.getRoot().child("QR Tags");
-                String ID = hashLocation;
-                QR qrToDB = new QR(ID,Double.toString(lat),Double.toString(lon));
-                mDatabase.push().setValue(qrToDB);
-                bundle.putStringArray("cords", cords);
-                intentBundle.putExtras(bundle);
-                startActivity(intentBundle);
+                System.out.println(button);
+                if(button == "QR") {
+                    System.out.println("Location changed");
+                    Intent intentBundle = new Intent(TechMenuActivity.this, QRGeneratorActivity.class);
+                    Bundle bundle = new Bundle();
+                    lat = location.getLatitude();
+                    lon = location.getLongitude();
+                    System.out.println("Lat: " + lat);
+                    System.out.println("Lon: " + lon);
+                    String hashLat = hashCord(lat);
+                    String hashLon = hashCord(lon);
+                    hashLocation = hashLat + hashLon;
+                    String[] cords = {hashLat, hashLon};
+                    System.out.println("Hahs Lat :" + hashLat);
+                    System.out.println("Hahs Lon :" + hashLon);
+                    mDatabase = mDatabase.getRoot().child("QR Tags");
+                    String ID = hashLocation;
+                    QR qrToDB = new QR(ID, Double.toString(lat), Double.toString(lon));
+                    mDatabase.push().setValue(qrToDB);
+                    bundle.putStringArray("cords", cords);
+                    intentBundle.putExtras(bundle);
+                    startActivity(intentBundle);
+                } else if(button == "BLE"){
+                    System.out.println("Location changed");
+                    Intent intentBundle = new Intent(TechMenuActivity.this, TechAddBleActivity.class);
+                    Bundle bundle = new Bundle();
+                    lat = location.getLatitude();
+                    lon = location.getLongitude();
+                    String[] cords = {Double.toString(lat), Double.toString(lon)};
+                    bundle.putStringArray("cords", cords);
+                    intentBundle.putExtras(bundle);
+                    startActivity(intentBundle);
+                }
             }
 
             @Override
@@ -86,7 +101,8 @@ public class TechMenuActivity extends AppCompatActivity {
     }
 
     public void onClickAddQR(View v) {
-
+        addBLE.setEnabled(false);
+        button = "QR";
         addQR.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -101,24 +117,25 @@ public class TechMenuActivity extends AppCompatActivity {
                 locationManager.requestSingleUpdate("gps", listener, null);
             }
         });
-        /*
-        mDatabase = mDatabase.getRoot().child("QR Tags");
-        String ID = hashLocation;
-        String location = lat + "," + lon;
-        QR qrToDB = new QR(ID,location.substring(0,location.indexOf(',')),location.substring(location.indexOf(',')+1));
-        mDatabase.push().setValue(qrToDB);
-        */
     }
 
     public void onClickAddBLE(View v){
-        mDatabase = mDatabase.getRoot().child("BLE Tags");
-        //get location from GPS
-        String ID = "MAC";
-        String location = "123,456";
-        //send Location to HASH
-        //ID = getHashToLocation();
-        BLE qrToDB = new BLE(ID,location.substring(0,location.indexOf(',')),location.substring(location.indexOf(',')+1));
-        mDatabase.push().setValue(qrToDB);
+        addQR.setEnabled(false);
+        button = "BLE";
+        addBLE.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //noinspection MissingPermission
+                if (ActivityCompat.checkSelfPermission(TechMenuActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(TechMenuActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        requestPermissions(new String[]{Manifest.permission.CAMERA,
+                                Manifest.permission.ACCESS_COARSE_LOCATION,
+                                Manifest.permission.ACCESS_FINE_LOCATION},1);
+                    }
+                }
+                locationManager.requestSingleUpdate("gps", listener, null);
+            }
+        });
     }
 
     private static Map<Integer, String> initHash(){

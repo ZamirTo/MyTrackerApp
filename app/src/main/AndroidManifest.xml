@@ -17,14 +17,17 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".MainActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+
         </activity>
         <activity android:name=".FriendsListActivity" />
         <activity android:name=".MenuActivity" />
-        <activity android:name=".TechMenuActivity" />
+        <activity android:name=".TechMenuActivity" >
+        <intent-filter>
+            <action android:name="android.intent.action.MAIN" />
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent-filter>
+        </activity>
+
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").
@@ -41,8 +44,9 @@
             android:name=".MapsActivity"
             android:label="@string/title_activity_maps" />
         <activity android:name=".BLEActivity" />
-        <activity android:name=".QRGeneratorActivity"></activity>
-        <activity android:name=".AdminActivity">
+        <activity android:name=".QRGeneratorActivity" />
+        <activity android:name=".AdminActivity"></activity>
+        <activity android:name=".TechAddBleActivity">
 
         </activity>
     </application>
