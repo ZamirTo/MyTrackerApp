@@ -258,6 +258,7 @@ public class AdminActivity extends AppCompatActivity {
     }
 
     public void onPromoteClicked(View v){
+        getCommit.setEnabled(true);
         int size = listAdapter.getCount();
         for (int i = 0; i < size; i++) {
             if (listAdapter.getItem(i).isChecked()) {

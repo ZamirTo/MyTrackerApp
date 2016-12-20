@@ -39,8 +39,8 @@ public class FriendsListActivity extends Activity {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.main);
 
-    getFriendListBtn = (Button)findViewById(R.id.getFriendsLocationBtn);
-    getFriendListBtn.setEnabled(false);
+    getFriendsLocation = (Button)findViewById(R.id.getFriendsLocationBtn);
+    getFriendsLocation.setEnabled(false);
     getFriendListBtn = (Button)findViewById(R.id.getFriendsListBtn);
     getFriendListBtn.setEnabled(false);
     mDatabase = FirebaseDatabase.getInstance().getReference();

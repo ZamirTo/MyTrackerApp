@@ -129,12 +129,12 @@ public class MainActivity extends AppCompatActivity {
                                 bundle.putStringArray("key", cords);
                                 intentBundle.putExtras(bundle);
                                 startActivity(intentBundle);
-                            } else if(modelItems.get(i).getEmail().equals(email) && modelItems.get(i).getPermission().equals("Tech")){
-                                //tech ACTIVITYS
-                                System.out.println("Tech");
-                            } else if(modelItems.get(i).getEmail().equals(email) && modelItems.get(i).getPermission().equals("Admin")){
-                                //admin ACTIVITY
-                                System.out.println("Admin");
+                            } else if(modelItems.get(i).getEmail().toLowerCase().equals(email.toLowerCase()) && modelItems.get(i).getPermission().equals("Tech")){
+                                Toast.makeText(MainActivity.this,"Welcome Tech",Toast.LENGTH_SHORT).show();
+                                startActivity(new Intent(MainActivity.this,TechMenuActivity.class));
+                            } else if(modelItems.get(i).getEmail().toLowerCase().equals(email.toLowerCase()) && modelItems.get(i).getPermission().equals("Admin")){
+                                Toast.makeText(MainActivity.this,"Welcome Boss",Toast.LENGTH_SHORT).show();
+                                startActivity(new Intent(MainActivity.this,AdminActivity.class));
                             }
                         }
                     }

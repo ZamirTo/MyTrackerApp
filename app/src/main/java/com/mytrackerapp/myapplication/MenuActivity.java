@@ -54,7 +54,7 @@ public class MenuActivity extends AppCompatActivity implements ZXingScannerView.
 
         Intent intent = getIntent();
         Bundle extBundle = intent.getExtras();
-        if(!extBundle.isEmpty()) {
+        if(extBundle!=null && !extBundle.isEmpty()) {
             String[] cords;
             boolean hasGpsCords = extBundle.containsKey("key");
             if (hasGpsCords) {
