@@ -8,6 +8,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,30 +18,92 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
 import java.util.ArrayList;
 import java.util.List;
 
 
 public class BLEActivity extends Activity {
+    private DatabaseReference mDatabase;
+    private FirebaseAuth mAuth;
+    private FirebaseAuth.AuthStateListener mAuthListener;
     private int REQUEST_ENABLE_BT = 1; // Any positive integer should work.
     private BluetoothAdapter mBluetoothAdapter;
     private Button button_scanBT;
     private Button button_getBLS;
+    private Button goToLocBtn;
     private ListView mainListView ;
     private ArrayAdapter<BluetoothObject> listAdapter;
-    private ArrayList<BluetoothObject> modelItems;
+    private ArrayList<BluetoothObject> scannedDev;
+    private ArrayList<BLE> bleDevices;
+    private String user;
+    private String userKey;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_ble);
+        Intent intent = getIntent();
+        Bundle extBundle = intent.getExtras();
+        if(!extBundle.isEmpty()) {
+            boolean hasUserDetail = extBundle.containsKey("user");
+            if(hasUserDetail){
+                String userDetail[] = extBundle.getStringArray("user");
+                user = userDetail[0];
+                userKey = userDetail[1];
+            }
+        }
+        bleDevices = new ArrayList<BLE>();
+        mDatabase = FirebaseDatabase.getInstance().getReference();
+        mDatabase = mDatabase.getRoot().child("BLE Tags");
         mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         button_scanBT = (Button) findViewById(R.id.button_scanBT);
         button_getBLS = (Button) findViewById(R.id.getBLEBtn);
-        modelItems = new ArrayList<BluetoothObject>();
+        goToLocBtn = (Button) findViewById(R.id.goToLocBtn);
+        scannedDev = new ArrayList<BluetoothObject>();
         // Find the ListView resource.
         mainListView = (ListView) findViewById( R.id.mainListView );
         enableBluetoothOnDevice();
+
+        mAuth = FirebaseAuth.getInstance();
+        mAuthListener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                FirebaseUser user = firebaseAuth.getCurrentUser();
+                if (user != null) {
+                    // User is signed in
+                    Log.d("onAuthStateChanged", "onAuthStateChanged:signed_in:" + user.getUid());
+                } else {
+                    // User is signed out
+                    Log.d("onAuthStateChanged", "onAuthStateChanged:signed_out");
+                }
+            }
+        };
+        mDatabase.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
+                    BLE post = postSnapshot.getValue(BLE.class);
+                    bleDevices.add(new BLE(post.getMacAddress(), post.getCordinate1(), post.getCordinate2()));
+                }
+                System.out.println("Done loading BLE from DB");
+                System.out.println("BLE Device size: " + bleDevices.size());
+                button_scanBT.setEnabled(true);
+                button_getBLS.setEnabled(true);
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
 
         button_getBLS.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -47,17 +111,24 @@ public class BLEActivity extends Activity {
                 getList();
             }
         });
+
         button_scanBT.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mainListView.setAdapter(null);
-                modelItems.clear();
+                scannedDev.clear();
                 startScanning();
             }
         });
     }//end onCreate
 
+
+    /**
+     * Start scan for BT device nearby
+     */
     private void startScanning() {
+        //disable goToLocBtn
+        goToLocBtn.setEnabled(false);
         // start looking for bluetooth devices
         mBluetoothAdapter.startDiscovery();
         // Discover new devices
@@ -82,19 +153,21 @@ public class BLEActivity extends Activity {
                     bluetoothObject.setBluetooth_type(device.getType());    // requires API 18 or higher
                     bluetoothObject.setBluetooth_uuids(device.getUuids());
                     bluetoothObject.setBluetooth_rssi(rssi);
-                    System.out.println(modelItems.size());
-                    if(modelItems.size()==0)
-                        modelItems.add(bluetoothObject);
-                    else if(modelItems.size()!=0){
+                    System.out.println(scannedDev.size());
+                    if(scannedDev.size()==0){
+                        scannedDev.add(bluetoothObject);
+                        goToLocBtn.setEnabled(true);
+                    }
+                    else if(scannedDev.size()!=0){
                         boolean addToArray = true;
-                        for (int i = 0 ; i < modelItems.size() ; i++) {
-                            if (modelItems.get(i).getBluetooth_address().equals(bluetoothObject.getBluetooth_address())) {
+                        for (int i = 0 ; i < scannedDev.size() ; i++) {
+                            if (scannedDev.get(i).getBluetooth_address().equals(bluetoothObject.getBluetooth_address())) {
                                 addToArray = false;
                                 break;
                             }
                         }
                         if(addToArray){
-                            modelItems.add(bluetoothObject);
+                            scannedDev.add(bluetoothObject);
                         }
                     }
                 }
@@ -106,8 +179,8 @@ public class BLEActivity extends Activity {
     }
 
     public void getList(){
-        if(modelItems.size()!=0) {
-            listAdapter = new blesArrayAdapter(this, modelItems);
+        if(scannedDev.size()!=0) {
+            listAdapter = new blesArrayAdapter(this, scannedDev);
             mainListView.setAdapter(listAdapter);
         }
     }
@@ -140,6 +213,62 @@ public class BLEActivity extends Activity {
                 Toast.makeText(this, "The user decided to allow bluetooth access", Toast.LENGTH_LONG).show();
             }
         }
+    }
+
+    /**
+     * go to user location by BLE scanned device
+     */
+    public void onGoToLocBtnClick(View v){
+        Toast.makeText(this, "Load your location...", Toast.LENGTH_LONG).show();
+        goToLocBtn.setEnabled(false);
+        // search the closest device from all detected
+        BluetoothObject closestDev = scannedDev.get(0);
+        String[] cords = new String[4];
+        System.out.println("Start searching for dev");
+        System.out.println("ScannedDev size = " + scannedDev.size());
+        if(scannedDev.size() > 1){
+            System.out.println("More than one device select the closest");
+            // select the strongest RSSI
+            double closest = -101d;
+            for (BluetoothObject dev: scannedDev
+                    ) {
+                System.out.println("CurrentClosest RSSI: " + closest);
+                System.out.println("DEV RSSI: " + dev.getBluetooth_rssi());
+                if(dev.getBluetooth_rssi() > closest){
+                    closest = dev.getBluetooth_rssi();
+                    closestDev = dev;
+                }
+            }
+        }
+        System.out.println("Finish selecting closest device");
+        String mac = closestDev.getBluetooth_address();
+
+        System.out.println("Start search in DB for it MAC");
+        System.out.println("MAC: " + mac);
+        //search in DB if MAC exsist
+        for (BLE bleTag: bleDevices
+                ) {
+            System.out.println("BLE MAC: " + bleTag.getMacAddress());
+            if(mac.equals(bleTag.getMacAddress())){
+                System.out.println("Found MAC -> going to BLE location");
+                cords[0] = user;
+                cords[1] = userKey;
+                cords[2] = bleTag.getCordinate1();
+                cords[3] = bleTag.getCordinate2();
+                Intent intentBundle = new Intent(BLEActivity.this,MapsActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putStringArray("cords", cords);
+                intentBundle.putExtras(bundle);
+                startActivity(intentBundle);
+                return;
+            }
+            else{
+                goToLocBtn.setEnabled(true);
+                Toast.makeText(this, "BLE isn't register at DB.", Toast.LENGTH_SHORT).show();
+            }
+        }
+
+
     }
 
     /** Holds child views for one row. */
@@ -251,10 +380,10 @@ public class BLEActivity extends Activity {
             }
             // Display BLE data
             name.setText(bleDevice.getBluetooth_name());
-            address.setText(bleDevice.getBluetooth_address());
-            state.setText(bleDevice.getBluetooth_state()+"");
-            type.setText(bleDevice.getBluetooth_type()+"");
-            RSSI.setText(bleDevice.getBluetooth_rssi()+"");
+            address.setText("MAC Address: " + bleDevice.getBluetooth_address());
+            state.setText("BT State: " + bleDevice.getBluetooth_state()+"");
+            type.setText("BT Type: " + bleDevice.getBluetooth_type()+"");
+            RSSI.setText("RSSI: " + bleDevice.getBluetooth_rssi()+"");
             return convertView;
         }
     }
