@@ -2,22 +2,12 @@ package com.mytrackerapp.myapplication;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.location.Criteria;
-import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Environment;
-import android.provider.Settings;
-import android.support.v4.app.ActivityCompat;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import com.google.android.gms.maps.CameraUpdateFactory;
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.WriterException;
@@ -25,8 +15,6 @@ import com.google.zxing.common.BitMatrix;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Random;
 
 public class QRGeneratorActivity extends Activity {
@@ -90,6 +78,10 @@ public class QRGeneratorActivity extends Activity {
         qrCodeImageview = (ImageView) findViewById(R.id.img_qr_code_image);
     }
 
+    /**
+     * save qr at the tech device
+     * @param finalBitmap
+     */
     private void SaveImage(Bitmap finalBitmap) {
 
         String root = Environment.getExternalStorageDirectory().toString();

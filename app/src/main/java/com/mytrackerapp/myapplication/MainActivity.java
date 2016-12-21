@@ -67,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
                 for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
                     newUser post = postSnapshot.getValue(newUser.class);
                     modelItems.add(new newUser(post.getName(),post.getEmail(),postSnapshot.getKey(),post.getPermission()));
-                    System.out.println("DONE");
+//                    System.out.println("DONE");
                     loginBtn.setEnabled(true);
                 }
             }

@@ -178,6 +178,9 @@ public class BLEActivity extends Activity {
         registerReceiver(mReceiver, filter);
     }
 
+    /**
+     * show list of all the scanned deviced
+     */
     public void getList(){
         if(scannedDev.size()!=0) {
             listAdapter = new blesArrayAdapter(this, scannedDev);
@@ -185,7 +188,9 @@ public class BLEActivity extends Activity {
         }
     }
 
-
+    /**
+     * enable BT on user device
+     */
     private void enableBluetoothOnDevice() {
         if (mBluetoothAdapter == null) {
             finish();
@@ -216,7 +221,7 @@ public class BLEActivity extends Activity {
     }
 
     /**
-     * go to user location by BLE scanned device
+     * show user location found by BLE scanned device
      */
     public void onGoToLocBtnClick(View v){
         Toast.makeText(this, "Load your location...", Toast.LENGTH_LONG).show();

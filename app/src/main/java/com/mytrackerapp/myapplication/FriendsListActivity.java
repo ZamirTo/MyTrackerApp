@@ -54,7 +54,7 @@ public class FriendsListActivity extends Activity {
         for (DataSnapshot postSnapshot: dataSnapshot.getChildren()) {
           newUser post = postSnapshot.getValue(newUser.class);
           modelItems.add(new newUserModel(post.getName(),post.getLocation(),false));
-          System.out.println("DONE");
+//          System.out.println("DONE");
           getFriendListBtn.setEnabled(true);
         }
       }
@@ -77,6 +77,10 @@ public class FriendsListActivity extends Activity {
     });
   }
 
+    /**
+     * select friend to show its location
+     * @param v
+     */
   public void onClickFriends(View v){
     if(modelItems.size()!=0) {
       // Set our custom array adapter as the ListView's adapter.
@@ -86,6 +90,10 @@ public class FriendsListActivity extends Activity {
     }
   }
 
+    /**
+     * open map activity with all the selected friends location
+     * @param v
+     */
   public void onClickChecked(View v){
     if(modelItems.size()!=0) {
       int counterCheck = 0;

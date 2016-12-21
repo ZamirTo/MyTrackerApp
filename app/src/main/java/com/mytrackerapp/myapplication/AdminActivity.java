@@ -78,7 +78,7 @@ public class AdminActivity extends AppCompatActivity {
                 for (DataSnapshot postSnapshot: dataSnapshot.getChildren()) {
                     newUser post = postSnapshot.getValue(newUser.class);
                     modelItems.add(new newUserModel(post.getName(),postSnapshot.getKey(),false,post.getEmail()));
-                    System.out.println("Done Users");
+//                    System.out.println("Done Users");
                     getUsers.setEnabled(true);
                 }
             }
@@ -95,7 +95,7 @@ public class AdminActivity extends AppCompatActivity {
                 for (DataSnapshot postSnapshot: dataSnapshot.getChildren()) {
                     QR post = postSnapshot.getValue(QR.class);
                     qrItems.add(new newQRModel(post.getID(),postSnapshot.getKey(),false));
-                    System.out.println("Done QRs");
+//                    System.out.println("Done QRs");
                     getQRs.setEnabled(true);
                 }
             }
@@ -112,7 +112,7 @@ public class AdminActivity extends AppCompatActivity {
                 for (DataSnapshot postSnapshot: dataSnapshot.getChildren()) {
                     BLE post = postSnapshot.getValue(BLE.class);
                     bleItems.add(new newBLEModel(post.getMacAddress(),postSnapshot.getKey(),false));
-                    System.out.println("Done BELs");
+//                    System.out.println("Done BELs");
                     getBLEs.setEnabled(true);
                 }
             }
@@ -123,6 +123,10 @@ public class AdminActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * show list of users from database
+     * @param v - current view
+     */
     public void onClickGetUsers(View v){
         if(modelItems.size()!=0) {
             // When item is tapped, toggle checked properties of CheckBox and UsersList.
@@ -145,6 +149,10 @@ public class AdminActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * show list of QR from database
+     * @param v - current view
+     */
     public void onClickGetQRs(View v){
         if(qrItems.size()!=0) {
             // When item is tapped, toggle checked properties of CheckBox and UsersList.
@@ -167,6 +175,10 @@ public class AdminActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * show list of BLE tags from database
+     * @param v - current view
+     */
     public void onClickGetBLEs(View v){
         if(bleItems.size()!=0) {
             // When item is tapped, toggle checked properties of CheckBox and UsersList.
@@ -235,6 +247,7 @@ public class AdminActivity extends AppCompatActivity {
         }
     }
 
+    /** Holds child views for one row. */
     private static class bleViewHolder {
         private CheckBox checkBox ;
         private TextView textView ;
@@ -257,6 +270,10 @@ public class AdminActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * promote user to Tech permission
+     * @param v
+     */
     public void onPromoteClicked(View v){
         getCommit.setEnabled(true);
         int size = listAdapter.getCount();
@@ -267,6 +284,10 @@ public class AdminActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * users, ble and qr to remove from database
+     * @param v
+     */
     public void onClickRemove(View v){
         getCommit.setEnabled(true);
         if(whatAdapterIsSet == 1) {
@@ -345,17 +366,20 @@ public class AdminActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * commit all the changes to database
+     * @param v
+     */
     public void onCommitClicked(View v){
         getCommit.setEnabled(false);
         int size = modelItemsToDelete.size();
         int size2 = qrItemsToDelete.size();
         int size3 = bletemsToDelete.size();
         int size4 = modelItemsToPromote.size();
-        System.out.println("IM SIZE4" + size4);
         for (int i = 0 ; i < size4; i++){
-            System.out.println(modelItemsToPromote.get(i).getCordinates());
-            System.out.println(modelItemsToPromote.get(i).getName());
-            System.out.println(modelItems.get(i).getEmail());
+//            System.out.println(modelItemsToPromote.get(i).getCordinates());
+//            System.out.println(modelItemsToPromote.get(i).getName());
+//            System.out.println(modelItems.get(i).getEmail());
             mDatabase.getRoot().child("Users").child(modelItemsToPromote.get(i).getCordinates())
                     .setValue(new newUser(modelItemsToPromote.get(i).getName(),modelItems.get(i).getEmail(),"0,0","Tech"));
         }

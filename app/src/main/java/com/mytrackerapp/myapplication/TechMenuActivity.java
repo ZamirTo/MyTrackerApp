@@ -1,18 +1,16 @@
 package com.mytrackerapp.myapplication;
 
-import android.*;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Build;
+import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 
@@ -96,6 +94,10 @@ public class TechMenuActivity extends AppCompatActivity {
         };
     }
 
+    /**
+     * move to add QR activity
+     * @param v
+     */
     public void onClickAddQR(View v) {
         addBLE.setEnabled(false);
         button = "QR";
@@ -115,6 +117,10 @@ public class TechMenuActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * move to add BLE activity
+     * @param v
+     */
     public void onClickAddBLE(View v){
         addQR.setEnabled(false);
         button = "BLE";
@@ -134,6 +140,10 @@ public class TechMenuActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * init the hash for location cordinates
+     * @return
+     */
     private static Map<Integer, String> initHash(){
         Map<Integer, String> hash = new HashMap<Integer, String>();
 
@@ -158,6 +168,11 @@ public class TechMenuActivity extends AppCompatActivity {
         return hash;
     }
 
+    /**
+     * hash give cord and return its hash
+     * @param cord - cord to hash
+     * @return
+     */
     private static String hashCord(double cord){
 
         String s = Double.toString(cord);
@@ -202,6 +217,11 @@ public class TechMenuActivity extends AppCompatActivity {
         return hashCord.toString();
     }
 
+    /**
+     * decrypt give hash cord
+     * @param hashCord - hash cord to be decrypted
+     * @return
+     */
     private static double reHashCord(String hashCord){
         StringBuffer cord = new StringBuffer();
         if(hashCord.endsWith("1"))

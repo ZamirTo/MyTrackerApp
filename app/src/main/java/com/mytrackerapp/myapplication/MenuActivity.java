@@ -3,26 +3,26 @@ package com.mytrackerapp.myapplication;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.util.Log;
-import android.view.KeyEvent;
-import android.view.Menu;
-import android.view.View;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Build;
+import android.os.Bundle;
 import android.provider.Settings;
+import android.support.v4.app.ActivityCompat;
+import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+import android.view.KeyEvent;
+import android.view.View;
 import android.widget.Button;
+
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.zxing.Result;
+
 import java.util.ArrayList;
 
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
@@ -107,6 +107,12 @@ public class MenuActivity extends AppCompatActivity implements ZXingScannerView.
         configure_button();
     }
 
+    /**
+     * goes back to menu activity
+     * @param keyCode
+     * @param event
+     * @return
+     */
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if ((keyCode == KeyEvent.KEYCODE_BACK)) {
@@ -116,6 +122,12 @@ public class MenuActivity extends AppCompatActivity implements ZXingScannerView.
         return super.onKeyDown(keyCode, event);
     }
 
+    /**
+     * request permission for app requiers
+     * @param requestCode
+     * @param permissions
+     * @param grantResults
+     */
     @Override
     public void onRequestPermissionsResult(int requestCode ,String[] permissions, int[] grantResults) {
         switch(requestCode){
@@ -129,6 +141,10 @@ public class MenuActivity extends AppCompatActivity implements ZXingScannerView.
         }
     }
 
+    /**
+     * start the QR scanner
+     * @param view
+     */
     public void QrScanner(View view){
         mScannerView = new ZXingScannerView(this);
         setContentView(mScannerView);
@@ -136,6 +152,10 @@ public class MenuActivity extends AppCompatActivity implements ZXingScannerView.
         mScannerView.startCamera();
     }
 
+    /**
+     * check if user had gave all the required permission
+     * ask for any missing permission
+     */
     void configure_button(){
         // first check for permissions
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
@@ -165,10 +185,18 @@ public class MenuActivity extends AppCompatActivity implements ZXingScannerView.
         });
     }
 
+    /**
+     * open get friends activity
+     * @param v
+     */
     public void getFriends(View v){
         startActivity(new Intent(this,FriendsListActivity.class));
     }
 
+    /**
+     * open get BLE activity
+     * @param v
+     */
     public void getBLE (View v) {
         Intent intentBundle = new Intent(MenuActivity.this,BLEActivity.class);
         Bundle bundle = new Bundle();
@@ -178,10 +206,17 @@ public class MenuActivity extends AppCompatActivity implements ZXingScannerView.
         startActivity(intentBundle);
     }
 
+    /**
+     * logout from accont
+     * @param v
+     */
     public void logOutBtn(View v){
         startActivity(new Intent(this, MainActivity.class));
     }
 
+    /**
+     * stop the camera from QR scan
+     */
     @Override
     public void onPause(){
         super.onPause();
@@ -189,6 +224,11 @@ public class MenuActivity extends AppCompatActivity implements ZXingScannerView.
             mScannerView.stopCamera();
     }
 
+    /**
+     * handle the result of the QR scan
+     * send it to next activity
+     * @param result
+     */
     @Override
     public void handleResult(final Result result) {
         for (int i = 0; i < modelItems.size() ; i++) {

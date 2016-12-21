@@ -76,6 +76,9 @@ public class TechAddBleActivity extends AppCompatActivity {
         });
     }//end onCreate
 
+    /**
+     * start scan for fo BLE device nearby
+     */
     private void startScanning() {
         // start looking for bluetooth devices
         mBluetoothAdapter.startDiscovery();
@@ -123,6 +126,9 @@ public class TechAddBleActivity extends AppCompatActivity {
         registerReceiver(mReceiver, filter);
     }
 
+    /**
+     * return list of found BLE device
+     */
     public void getList(){
         if(modelItems.size()!=0) {
             listAdapter = new BleArrayAdapter(this, modelItems);
@@ -130,7 +136,9 @@ public class TechAddBleActivity extends AppCompatActivity {
         }
     }
 
-
+    /**
+     * enable BT on device
+     */
     private void enableBluetoothOnDevice() {
         if (mBluetoothAdapter == null) {
             finish();
@@ -143,6 +151,13 @@ public class TechAddBleActivity extends AppCompatActivity {
             startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT);
         }
     }
+
+    /**
+     * check if user has enable BT
+     * @param requestCode
+     * @param resultCode
+     * @param data
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -246,6 +261,10 @@ public class TechAddBleActivity extends AppCompatActivity {
 
     }
 
+    /**
+     * add the selected BLE to database with the tech current location
+     * @param v
+     */
     public void onAddBleClicked(View v) {
         if (modelItems.size() != 0) {
             int counterCheck = 0;
