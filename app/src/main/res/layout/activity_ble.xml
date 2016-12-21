@@ -16,7 +16,8 @@
         android:id="@+id/getBLEBtn"
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignParentEnd="true"
+        android:enabled="false"/>
 
     <Button
         android:id="@+id/button_scanBT"
@@ -24,13 +25,26 @@
         android:layout_height="wrap_content"
         android:text="Scan Bluetooth Devices"
         android:layout_below="@+id/getBLEBtn"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:enabled="false"/>
 
     <ListView
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:id="@+id/mainListView"
         android:layout_below="@+id/button_scanBT"
-        android:layout_alignParentStart="true"></ListView>
+        android:layout_alignParentStart="true"
+        android:layout_marginBottom="50dp"></ListView>
+
+    <Button
+        android:text="Take me to my location"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/button_scanBT"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="345dp"
+        android:id="@+id/goToLocBtn"
+        android:onClick="onGoToLocBtnClick"
+        android:enabled="false"/>
 
 </RelativeLayout>

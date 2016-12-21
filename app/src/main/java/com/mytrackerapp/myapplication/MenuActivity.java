@@ -54,7 +54,7 @@ public class MenuActivity extends AppCompatActivity implements ZXingScannerView.
 
         Intent intent = getIntent();
         Bundle extBundle = intent.getExtras();
-        if(extBundle!=null && !extBundle.isEmpty()) {
+        if(extBundle != null && !extBundle.isEmpty()) {
             String[] cords;
             boolean hasGpsCords = extBundle.containsKey("key");
             if (hasGpsCords) {
@@ -141,16 +141,16 @@ public class MenuActivity extends AppCompatActivity implements ZXingScannerView.
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
                 ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
                 ActivityCompat.checkSelfPermission(this,Manifest.permission.CAMERA)!= PackageManager.PERMISSION_GRANTED) {
-                //ActivityCompat.checkSelfPermission(this,Manifest.permission.BLUETOOTH) != PackageManager.PERMISSION_GRANTED &&
-                //ActivityCompat.checkSelfPermission(this,Manifest.permission.BLUETOOTH_ADMIN)!=PackageManager.PERMISSION_GRANTED &&
-                //ActivityCompat.checkSelfPermission(this,Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED) {
+            //ActivityCompat.checkSelfPermission(this,Manifest.permission.BLUETOOTH) != PackageManager.PERMISSION_GRANTED &&
+            //ActivityCompat.checkSelfPermission(this,Manifest.permission.BLUETOOTH_ADMIN)!=PackageManager.PERMISSION_GRANTED &&
+            //ActivityCompat.checkSelfPermission(this,Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 requestPermissions(new String[]{Manifest.permission.CAMERA,
                                 Manifest.permission.ACCESS_COARSE_LOCATION,
                                 Manifest.permission.ACCESS_FINE_LOCATION}
-                                //Manifest.permission.INTERNET,
-                                //Manifest.permission.BLUETOOTH,
-                                //Manifest.permission.BLUETOOTH_ADMIN}
+                        //Manifest.permission.INTERNET,
+                        //Manifest.permission.BLUETOOTH,
+                        //Manifest.permission.BLUETOOTH_ADMIN}
                         ,REQUEST_PERMISSIONS);
             }
             return;
@@ -169,7 +169,18 @@ public class MenuActivity extends AppCompatActivity implements ZXingScannerView.
         startActivity(new Intent(this,FriendsListActivity.class));
     }
 
-    public void getBLE (View v) { startActivity(new Intent(this, BLEActivity.class)); }
+    public void getBLE (View v) {
+        Intent intentBundle = new Intent(MenuActivity.this,BLEActivity.class);
+        Bundle bundle = new Bundle();
+        String[] user = {userName,userKey};
+        bundle.putStringArray("user", user);
+        intentBundle.putExtras(bundle);
+        startActivity(intentBundle);
+    }
+
+    public void logOutBtn(View v){
+        startActivity(new Intent(this, MainActivity.class));
+    }
 
     @Override
     public void onPause(){
