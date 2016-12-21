@@ -59,7 +59,8 @@
         android:background="@android:color/holo_blue_light"
         android:fontFamily="sans-serif-medium"
         android:textSize="24sp"
-        android:textAllCaps="false" />
+        android:textAllCaps="false"
+        android:onClick="logOutBtn"/>
 
     <Button
         android:layout_width="wrap_content"
