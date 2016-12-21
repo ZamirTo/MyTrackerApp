@@ -48,8 +48,6 @@ public class TechAddBleActivity extends AppCompatActivity {
             boolean hasGpsCords = extBundle.containsKey("cords");
             if (hasGpsCords) {
                 cords = extBundle.getStringArray("cords");
-                Toast.makeText(this, cords[0], Toast.LENGTH_LONG).show();
-                Toast.makeText(this, cords[1], Toast.LENGTH_LONG).show();
             }
         }
         mDatabase = FirebaseDatabase.getInstance().getReference();
@@ -251,13 +249,11 @@ public class TechAddBleActivity extends AppCompatActivity {
     public void onAddBleClicked(View v) {
         if (modelItems.size() != 0) {
             int counterCheck = 0;
-            System.out.println("before add : " + listAdapter.getCount());
             for (int i = 0; i < listAdapter.getCount(); i++) {
                 if (listAdapter.getItem(i).isChecked()) {
                     counterCheck++;
                 }
             }
-            System.out.println("conter" + counterCheck);
             if (counterCheck == 0) {
                 return;
             } else if (counterCheck > 1) {
@@ -265,12 +261,9 @@ public class TechAddBleActivity extends AppCompatActivity {
             } else {
                 for (int i = 0 ; i < listAdapter.getCount(); i++) {
                     if (listAdapter.getItem(i).isChecked()) {
-                        System.out.println("Adding");
-                        System.out.println(modelItems.get(i).getCordinates());
-                        System.out.println(cords[0]);
-                        System.out.println(cords[1]);
                         BLE bleToDB = new BLE(modelItems.get(i).getCordinates(), cords[0], cords[1]);
                         mDatabase.push().setValue(bleToDB);
+                        Toast.makeText(this, "BLE tag has been added.", Toast.LENGTH_LONG).show();
                     }
                 }
             }
