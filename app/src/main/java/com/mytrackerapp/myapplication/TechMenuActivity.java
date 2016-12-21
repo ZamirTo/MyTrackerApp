@@ -49,7 +49,6 @@ public class TechMenuActivity extends AppCompatActivity {
             public void onLocationChanged(Location location) {
                 System.out.println(button);
                 if(button == "QR") {
-                    System.out.println("Location changed");
                     Intent intentBundle = new Intent(TechMenuActivity.this, QRGeneratorActivity.class);
                     Bundle bundle = new Bundle();
                     lat = location.getLatitude();
@@ -60,8 +59,6 @@ public class TechMenuActivity extends AppCompatActivity {
                     String hashLon = hashCord(lon);
                     hashLocation = hashLat + hashLon;
                     String[] cords = {hashLat, hashLon};
-                    System.out.println("Hahs Lat :" + hashLat);
-                    System.out.println("Hahs Lon :" + hashLon);
                     mDatabase = mDatabase.getRoot().child("QR Tags");
                     String ID = hashLocation;
                     QR qrToDB = new QR(ID, Double.toString(lat), Double.toString(lon));
@@ -70,7 +67,6 @@ public class TechMenuActivity extends AppCompatActivity {
                     intentBundle.putExtras(bundle);
                     startActivity(intentBundle);
                 } else if(button == "BLE"){
-                    System.out.println("Location changed");
                     Intent intentBundle = new Intent(TechMenuActivity.this, TechAddBleActivity.class);
                     Bundle bundle = new Bundle();
                     lat = location.getLatitude();
