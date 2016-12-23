@@ -99,7 +99,7 @@ public class MainActivity extends AppCompatActivity {
         if(username.isEmpty()){
             valid = false;
         }
-        String email = emailInputText.getText().toString();
+        String email = emailInputText.getText().toString().toLowerCase();
         if (email.isEmpty()) {
             valid = false;
         }
