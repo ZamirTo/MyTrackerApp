@@ -103,7 +103,7 @@ public class MainActivity extends AppCompatActivity {
         if(username.isEmpty()){
             valid = false;
         }
-        String email = emailInputText.getText().toString().toLowerCase();
+        String email = emailInputText.getText().toString();
         if (email.isEmpty()) {
             valid = false;
         }
@@ -125,7 +125,7 @@ public class MainActivity extends AppCompatActivity {
                         Toast.makeText(MainActivity.this, "Wrong email or password", Toast.LENGTH_SHORT).show();
                     } else {
                         for (int i = 0 ; i < modelItems.size() ; i++) {
-                            if(modelItems.get(i).getEmail().toLowerCase().equals(mAuth.getCurrentUser().getEmail()) && modelItems.get(i).getPermission().equals("User")){
+                            if(modelItems.get(i).getEmail().toLowerCase().equals(mAuth.getCurrentUser().getEmail().toLowerCase()) && modelItems.get(i).getPermission().equals("User")){
                                 Toast.makeText(MainActivity.this, "You are loged in successfully", Toast.LENGTH_SHORT).show();
                                 Intent intentBundle = new Intent(MainActivity.this,MenuActivity.class);
                                 Bundle bundle = new Bundle();
@@ -149,7 +149,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void registerBtnClicked(View v) {
         if (validateForm()) {
-            String email = emailInputText.getText().toString();
+            String email = emailInputText.getText().toString().toLowerCase();
             String pass = passwordInputText.getText().toString();
             mAuth.createUserWithEmailAndPassword(email, pass).addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                 @Override
@@ -168,7 +168,7 @@ public class MainActivity extends AppCompatActivity {
                         }*/
                         NewUser temp = new NewUser();
                         temp.setName(usernameInputText.getText().toString());
-                        temp.setEmail(emailInputText.getText().toString());
+                        temp.setEmail(emailInputText.getText().toString().toLowerCase());
                         temp.setLocation("0,0");
                         temp.setPermission("User");
                         mDatabase.getRoot().child("Users").push().setValue(temp);
