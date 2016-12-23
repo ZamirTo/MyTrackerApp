@@ -1,10 +1,10 @@
-package com.mytrackerapp.myapplication;
+package com.mytrackerapp.myapplication.model;
 
 import android.os.Parcel;
 import android.os.ParcelUuid;
 import android.os.Parcelable;
 
-public class BluetoothObject implements Parcelable {
+public class BluetoothModel implements Parcelable {
     private String bluetooth_name;
     private String bluetooth_address;
     private int bluetooth_state;
@@ -61,9 +61,9 @@ public class BluetoothObject implements Parcelable {
     }
 
     // Parcelable stuff
-    public BluetoothObject(){}  //empty constructor
+    public BluetoothModel(){}  //empty constructor
 
-    public BluetoothObject(Parcel in) {
+    public BluetoothModel(Parcel in) {
         super();
         readFromParcel(in);
     }
@@ -72,12 +72,12 @@ public class BluetoothObject implements Parcelable {
         bluetooth_name = in.readString();
     }
 
-    public static final Parcelable.Creator<BluetoothObject> CREATOR = new Parcelable.Creator<BluetoothObject>() {
-        public BluetoothObject createFromParcel(Parcel in) {
-            return new BluetoothObject(in);
+    public static final Parcelable.Creator<BluetoothModel> CREATOR = new Parcelable.Creator<BluetoothModel>() {
+        public BluetoothModel createFromParcel(Parcel in) {
+            return new BluetoothModel(in);
         }
-        public BluetoothObject[] newArray(int size) {
-            return new BluetoothObject[size];
+        public BluetoothModel[] newArray(int size) {
+            return new BluetoothModel[size];
         }
     };
 
@@ -91,4 +91,4 @@ public class BluetoothObject implements Parcelable {
         out.writeString(bluetooth_name);
     }
 
-}//end class BluetoothObject
+}//end class BluetoothModel

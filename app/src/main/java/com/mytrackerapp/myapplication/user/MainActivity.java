@@ -1,4 +1,4 @@
-package com.mytrackerapp.myapplication;
+package com.mytrackerapp.myapplication.user;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -19,6 +19,10 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.mytrackerapp.myapplication.R;
+import com.mytrackerapp.myapplication.admin.AdminActivity;
+import com.mytrackerapp.myapplication.json.NewUser;
+import com.mytrackerapp.myapplication.tech.TechMenuActivity;
 
 import java.util.ArrayList;
 
@@ -30,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
     private EditText usernameInputText;
     private EditText emailInputText;
     private EditText passwordInputText;
-    private ArrayList<newUser> modelItems;
+    private ArrayList<NewUser> modelItems;
     private Button loginBtn;
 
     @Override
@@ -38,7 +42,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        modelItems = new ArrayList<newUser>();
+        modelItems = new ArrayList<NewUser>();
         emailInputText = (EditText) findViewById(R.id.email_input_Text);
         passwordInputText = (EditText) findViewById(R.id.password_input_text);
         usernameInputText = (EditText) findViewById(R.id.username_input_text);
@@ -65,8 +69,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
-                    newUser post = postSnapshot.getValue(newUser.class);
-                    modelItems.add(new newUser(post.getName(),post.getEmail(),postSnapshot.getKey(),post.getPermission()));
+                    NewUser post = postSnapshot.getValue(NewUser.class);
+                    modelItems.add(new NewUser(post.getName(),post.getEmail(),postSnapshot.getKey(),post.getPermission()));
 //                    System.out.println("DONE");
                     loginBtn.setEnabled(true);
                 }
@@ -155,14 +159,14 @@ public class MainActivity extends AppCompatActivity {
                     }
                     else {
                         /*for (int i = 0 ; i < 50 ; i++){
-                            newUser temp = new newUser();
+                            NewUser temp = new NewUser();
                             temp.setName(usernameInputText.getText().toString()+i);
                             temp.setEmail(emailInputText.getText().toString()+i);
                             temp.setLocation("0,0");
                             temp.setPermission("User");
                             mDatabase.getRoot().child("Users").push().setValue(temp);
                         }*/
-                        newUser temp = new newUser();
+                        NewUser temp = new NewUser();
                         temp.setName(usernameInputText.getText().toString());
                         temp.setEmail(emailInputText.getText().toString());
                         temp.setLocation("0,0");

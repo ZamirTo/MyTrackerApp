@@ -1,4 +1,4 @@
-package com.mytrackerapp.myapplication;
+package com.mytrackerapp.myapplication.tech;
 
 import android.Manifest;
 import android.content.Intent;
@@ -16,6 +16,8 @@ import android.widget.Button;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.mytrackerapp.myapplication.R;
+import com.mytrackerapp.myapplication.json.QR;
 
 import java.util.HashMap;
 import java.util.Map;

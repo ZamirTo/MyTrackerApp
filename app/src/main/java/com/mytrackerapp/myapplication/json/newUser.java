@@ -1,33 +1,33 @@
-package com.mytrackerapp.myapplication;
+package com.mytrackerapp.myapplication.json;
 
-public class newUser{
+public class NewUser {
     private String name;
     private String email;
     private String location;
     private String permission;
 
-    public newUser(){}
+    public NewUser(){}
 
-    public newUser(String _name, String _email, String _location, String _per){
+    public NewUser(String _name, String _email, String _location, String _per){
         this.name = _name;
         this.email = _email;
         this.location = _location;
         this.permission = _per;
     }
 
-    void setName(String _name){
+    public void setName(String _name){
         name = _name;
     }
 
-    void setEmail(String _email){
+    public void setEmail(String _email){
         email = _email;
     }
 
-    void setLocation(String _loc){
+    public void setLocation(String _loc){
         location = _loc;
     }
 
-    void setPermission(String per) {permission = per;}
+    public void setPermission(String per) {permission = per;}
 
     public String getName(){
         return name;

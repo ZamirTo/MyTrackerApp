@@ -8,7 +8,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.mytrackerapp.myapplication.TechAddBleActivity">
+    tools:context="com.mytrackerapp.myapplication.tech.TechAddBleActivity">
 
         <Button
             android:text="Get Scanned Bluetooth Devices"

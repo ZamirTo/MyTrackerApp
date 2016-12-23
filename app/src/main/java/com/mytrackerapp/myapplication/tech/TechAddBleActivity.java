@@ -1,4 +1,4 @@
-package com.mytrackerapp.myapplication;
+package com.mytrackerapp.myapplication.tech;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -20,6 +20,10 @@ import android.widget.Toast;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.mytrackerapp.myapplication.model.BluetoothModel;
+import com.mytrackerapp.myapplication.R;
+import com.mytrackerapp.myapplication.json.BLE;
+import com.mytrackerapp.myapplication.model.newBLEModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -97,25 +101,25 @@ public class TechAddBleActivity extends AppCompatActivity {
                     // but should be displayed in "dBm" units
                     int rssi = intent.getShortExtra(BluetoothDevice.EXTRA_RSSI,Short.MIN_VALUE);
                     // Create the device object and add it to the arrayList of devices
-                    BluetoothObject bluetoothObject = new BluetoothObject();
-                    bluetoothObject.setBluetooth_name(device.getName());
-                    bluetoothObject.setBluetooth_address(device.getAddress());
-                    bluetoothObject.setBluetooth_state(device.getBondState());
-                    bluetoothObject.setBluetooth_type(device.getType());    // requires API 18 or higher
-                    bluetoothObject.setBluetooth_uuids(device.getUuids());
-                    bluetoothObject.setBluetooth_rssi(rssi);
+                    BluetoothModel bluetoothModel = new BluetoothModel();
+                    bluetoothModel.setBluetooth_name(device.getName());
+                    bluetoothModel.setBluetooth_address(device.getAddress());
+                    bluetoothModel.setBluetooth_state(device.getBondState());
+                    bluetoothModel.setBluetooth_type(device.getType());    // requires API 18 or higher
+                    bluetoothModel.setBluetooth_uuids(device.getUuids());
+                    bluetoothModel.setBluetooth_rssi(rssi);
                     if(modelItems.size()==0)
-                        modelItems.add(new newBLEModel(bluetoothObject.getBluetooth_name(),bluetoothObject.getBluetooth_address(),false));
+                        modelItems.add(new newBLEModel(bluetoothModel.getBluetooth_name(), bluetoothModel.getBluetooth_address(),false));
                     else if(modelItems.size()!=0){
                         boolean addToArray = true;
                         for (int i = 0 ; i < modelItems.size() ; i++) {
-                            if (modelItems.get(i).getName().equals(bluetoothObject.getBluetooth_name())) {
+                            if (modelItems.get(i).getName().equals(bluetoothModel.getBluetooth_name())) {
                                 addToArray = false;
                                 break;
                             }
                         }
                         if(addToArray){
-                            modelItems.add(new newBLEModel(bluetoothObject.getBluetooth_name(),bluetoothObject.getBluetooth_address(),false));
+                            modelItems.add(new newBLEModel(bluetoothModel.getBluetooth_name(), bluetoothModel.getBluetooth_address(),false));
                         }
                     }
                 }

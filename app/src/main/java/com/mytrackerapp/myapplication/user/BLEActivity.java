@@ -1,4 +1,4 @@
-package com.mytrackerapp.myapplication;
+package com.mytrackerapp.myapplication.user;
 
 import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
@@ -26,6 +26,9 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.mytrackerapp.myapplication.R;
+import com.mytrackerapp.myapplication.json.BLE;
+import com.mytrackerapp.myapplication.model.BluetoothModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,8 +44,8 @@ public class BLEActivity extends Activity {
     private Button button_getBLS;
     private Button goToLocBtn;
     private ListView mainListView ;
-    private ArrayAdapter<BluetoothObject> listAdapter;
-    private ArrayList<BluetoothObject> scannedDev;
+    private ArrayAdapter<BluetoothModel> listAdapter;
+    private ArrayList<BluetoothModel> scannedDev;
     private ArrayList<BLE> bleDevices;
     private String user;
     private String userKey;
@@ -68,7 +71,7 @@ public class BLEActivity extends Activity {
         button_scanBT = (Button) findViewById(R.id.button_scanBT);
         button_getBLS = (Button) findViewById(R.id.getBLEBtn);
         goToLocBtn = (Button) findViewById(R.id.goToLocBtn);
-        scannedDev = new ArrayList<BluetoothObject>();
+        scannedDev = new ArrayList<BluetoothModel>();
         // Find the ListView resource.
         mainListView = (ListView) findViewById( R.id.mainListView );
         enableBluetoothOnDevice();
@@ -146,28 +149,28 @@ public class BLEActivity extends Activity {
                     // but should be displayed in "dBm" units
                     int rssi = intent.getShortExtra(BluetoothDevice.EXTRA_RSSI,Short.MIN_VALUE);
                     // Create the device object and add it to the arrayList of devices
-                    BluetoothObject bluetoothObject = new BluetoothObject();
-                    bluetoothObject.setBluetooth_name(device.getName());
-                    bluetoothObject.setBluetooth_address(device.getAddress());
-                    bluetoothObject.setBluetooth_state(device.getBondState());
-                    bluetoothObject.setBluetooth_type(device.getType());    // requires API 18 or higher
-                    bluetoothObject.setBluetooth_uuids(device.getUuids());
-                    bluetoothObject.setBluetooth_rssi(rssi);
+                    BluetoothModel bluetoothModel = new BluetoothModel();
+                    bluetoothModel.setBluetooth_name(device.getName());
+                    bluetoothModel.setBluetooth_address(device.getAddress());
+                    bluetoothModel.setBluetooth_state(device.getBondState());
+                    bluetoothModel.setBluetooth_type(device.getType());    // requires API 18 or higher
+                    bluetoothModel.setBluetooth_uuids(device.getUuids());
+                    bluetoothModel.setBluetooth_rssi(rssi);
                     System.out.println(scannedDev.size());
                     if(scannedDev.size()==0){
-                        scannedDev.add(bluetoothObject);
+                        scannedDev.add(bluetoothModel);
                         goToLocBtn.setEnabled(true);
                     }
                     else if(scannedDev.size()!=0){
                         boolean addToArray = true;
                         for (int i = 0 ; i < scannedDev.size() ; i++) {
-                            if (scannedDev.get(i).getBluetooth_address().equals(bluetoothObject.getBluetooth_address())) {
+                            if (scannedDev.get(i).getBluetooth_address().equals(bluetoothModel.getBluetooth_address())) {
                                 addToArray = false;
                                 break;
                             }
                         }
                         if(addToArray){
-                            scannedDev.add(bluetoothObject);
+                            scannedDev.add(bluetoothModel);
                         }
                     }
                 }
@@ -227,7 +230,7 @@ public class BLEActivity extends Activity {
         Toast.makeText(this, "Load your location...", Toast.LENGTH_LONG).show();
         goToLocBtn.setEnabled(false);
         // search the closest device from all detected
-        BluetoothObject closestDev = scannedDev.get(0);
+        BluetoothModel closestDev = scannedDev.get(0);
         String[] cords = new String[4];
         System.out.println("Start searching for dev");
         System.out.println("ScannedDev size = " + scannedDev.size());
@@ -235,7 +238,7 @@ public class BLEActivity extends Activity {
             System.out.println("More than one device select the closest");
             // select the strongest RSSI
             double closest = -101d;
-            for (BluetoothObject dev: scannedDev
+            for (BluetoothModel dev: scannedDev
                     ) {
                 System.out.println("CurrentClosest RSSI: " + closest);
                 System.out.println("DEV RSSI: " + dev.getBluetooth_rssi());
@@ -333,11 +336,11 @@ public class BLEActivity extends Activity {
     }
 
     /** Custom adapter for displaying an array of Friends objects. */
-    private static class blesArrayAdapter extends ArrayAdapter<BluetoothObject> {
+    private static class blesArrayAdapter extends ArrayAdapter<BluetoothModel> {
 
         private LayoutInflater inflater;
 
-        public blesArrayAdapter(Context context, List<BluetoothObject> friendList ) {
+        public blesArrayAdapter(Context context, List<BluetoothModel> friendList ) {
             super(context, R.layout.row_bt_scan_new_device, friendList);
             // Cache the LayoutInflate to avoid asking for a new one each time.
             inflater = LayoutInflater.from(context) ;
@@ -346,7 +349,7 @@ public class BLEActivity extends Activity {
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             // Friend to display
-            BluetoothObject bleDevice = this.getItem(position);
+            BluetoothModel bleDevice = this.getItem(position);
 
             // The child views in each row.
             TextView name;

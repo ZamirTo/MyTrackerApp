@@ -1,13 +1,13 @@
-package com.mytrackerapp.myapplication;
+package com.mytrackerapp.myapplication.json;
 
-public class BLE {
-    private String macAddress;
+public class QR {
+    private String id;
     private String cordinate1;
     private String cordinate2;
 
-    public BLE(){}
-    public BLE(String _macAddress, String _crod1, String _cord2){
-        this.macAddress = _macAddress;
+    public QR(){}
+    public QR(String _id, String _crod1, String _cord2){
+        this.id = _id;
         this.cordinate1 = _crod1;
         this.cordinate2 = _cord2;
     }
@@ -17,8 +17,8 @@ public class BLE {
         this.cordinate2 = _cord2;
     }
 
-    public void setMacAddress(String _macAddress){
-        this.macAddress = _macAddress;
+    public void setID(String _id){
+        this.id = _id;
     }
 
     public String getCordinate1(){
@@ -29,7 +29,7 @@ public class BLE {
         return this.cordinate2;
     }
 
-    public String getMacAddress(){
-        return this.macAddress;
+    public String getID(){
+        return this.id;
     }
 }

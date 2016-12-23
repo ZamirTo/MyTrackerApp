@@ -1,4 +1,4 @@
-package com.mytrackerapp.myapplication;
+package com.mytrackerapp.myapplication.admin;
 
 import android.content.Context;
 import android.content.Intent;
@@ -18,6 +18,14 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.mytrackerapp.myapplication.R;
+import com.mytrackerapp.myapplication.json.BLE;
+import com.mytrackerapp.myapplication.json.NewUser;
+import com.mytrackerapp.myapplication.json.QR;
+import com.mytrackerapp.myapplication.model.newBLEModel;
+import com.mytrackerapp.myapplication.model.newQRModel;
+import com.mytrackerapp.myapplication.model.newUserModel;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -76,7 +84,7 @@ public class AdminActivity extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for (DataSnapshot postSnapshot: dataSnapshot.getChildren()) {
-                    newUser post = postSnapshot.getValue(newUser.class);
+                    NewUser post = postSnapshot.getValue(NewUser.class);
                     modelItems.add(new newUserModel(post.getName(),postSnapshot.getKey(),false,post.getEmail()));
 //                    System.out.println("Done Users");
                     getUsers.setEnabled(true);
@@ -381,7 +389,7 @@ public class AdminActivity extends AppCompatActivity {
 //            System.out.println(modelItemsToPromote.get(i).getName());
 //            System.out.println(modelItems.get(i).getEmail());
             mDatabase.getRoot().child("Users").child(modelItemsToPromote.get(i).getCordinates())
-                    .setValue(new newUser(modelItemsToPromote.get(i).getName(),modelItems.get(i).getEmail(),"0,0","Tech"));
+                    .setValue(new NewUser(modelItemsToPromote.get(i).getName(),modelItems.get(i).getEmail(),"0,0","Tech"));
         }
         for (int i = 0 ; i < size ; i++){
             mDatabase.getRoot().child("Users").child(modelItemsToDelete.get(i).getCordinates()).removeValue();

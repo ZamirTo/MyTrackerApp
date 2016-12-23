@@ -1,4 +1,4 @@
-package com.mytrackerapp.myapplication;
+package com.mytrackerapp.myapplication.user;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +20,9 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.mytrackerapp.myapplication.R;
+import com.mytrackerapp.myapplication.json.NewUser;
+import com.mytrackerapp.myapplication.model.newUserModel;
 
 
 public class FriendsListActivity extends Activity {
@@ -52,7 +55,7 @@ public class FriendsListActivity extends Activity {
       @Override
       public void onDataChange(DataSnapshot dataSnapshot) {
         for (DataSnapshot postSnapshot: dataSnapshot.getChildren()) {
-          newUser post = postSnapshot.getValue(newUser.class);
+          NewUser post = postSnapshot.getValue(NewUser.class);
           modelItems.add(new newUserModel(post.getName(),post.getLocation(),false));
 //          System.out.println("DONE");
           getFriendListBtn.setEnabled(true);

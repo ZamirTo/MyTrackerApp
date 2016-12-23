@@ -1,4 +1,4 @@
-package com.mytrackerapp.myapplication;
+package com.mytrackerapp.myapplication.user;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -14,6 +14,8 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.mytrackerapp.myapplication.R;
+import com.mytrackerapp.myapplication.json.NewUser;
 
 public class MapsActivity extends FragmentActivity implements OnMapReadyCallback {
 
@@ -61,7 +63,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
                 mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(position, 14));
                 // add update to the user location as string : cords1,cords2;
                 mDatabase = mDatabase.getRoot().child("Users").child(cords[1]);
-                mDatabase.setValue(new newUser(cords[0],mAuth.getCurrentUser().getEmail(),cords[2]+","+cords[3],"User"));
+                mDatabase.setValue(new NewUser(cords[0],mAuth.getCurrentUser().getEmail(),cords[2]+","+cords[3],"User"));
             }
             else if(hasFriendsCords){
                 cords = extBundle.getStringArray("fcords");

@@ -1,4 +1,4 @@
-package com.mytrackerapp.myapplication;
+package com.mytrackerapp.myapplication.user;
 
 import android.Manifest;
 import android.content.Intent;
@@ -22,6 +22,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.zxing.Result;
+import com.mytrackerapp.myapplication.R;
+import com.mytrackerapp.myapplication.json.QR;
 
 import java.util.ArrayList;
 
