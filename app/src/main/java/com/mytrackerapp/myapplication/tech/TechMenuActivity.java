@@ -1,15 +1,9 @@
 package com.mytrackerapp.myapplication.tech;
 
-import android.Manifest;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.os.Build;
 import android.os.Bundle;
-import android.provider.Settings;
-import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
@@ -18,6 +12,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.mytrackerapp.myapplication.R;
 import com.mytrackerapp.myapplication.json.QR;
+import com.mytrackerapp.myapplication.user.GPSTracker;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -33,6 +28,9 @@ public class TechMenuActivity extends AppCompatActivity {
     private String hashLocation;
     private double lat, lon;
     private String button;
+    private GPSTracker gps;
+    private double latitude;
+    private double longitude;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,56 +42,24 @@ public class TechMenuActivity extends AppCompatActivity {
         addQR = (Button) findViewById(R.id.addQRbtn);
         addBLE = (Button)findViewById(R.id.addBlebtn);
         locationManager = (LocationManager) getSystemService(LOCATION_SERVICE);
-        listener = new LocationListener() {
-            @Override
-            public void onLocationChanged(Location location) {
-                System.out.println(button);
-                if(button == "QR") {
-                    Intent intentBundle = new Intent(TechMenuActivity.this, QRGeneratorActivity.class);
-                    Bundle bundle = new Bundle();
-                    lat = location.getLatitude();
-                    lon = location.getLongitude();
-                    System.out.println("Lat: " + lat);
-                    System.out.println("Lon: " + lon);
-                    String hashLat = hashCord(lat);
-                    String hashLon = hashCord(lon);
-                    hashLocation = hashLat + hashLon;
-                    String[] cords = {hashLat, hashLon};
-                    mDatabase = mDatabase.getRoot().child("QR Tags");
-                    String ID = hashLocation;
-                    QR qrToDB = new QR(ID, Double.toString(lat), Double.toString(lon));
-                    mDatabase.push().setValue(qrToDB);
-                    bundle.putStringArray("cords", cords);
-                    intentBundle.putExtras(bundle);
-                    startActivity(intentBundle);
-                } else if(button == "BLE"){
-                    Intent intentBundle = new Intent(TechMenuActivity.this, TechAddBleActivity.class);
-                    Bundle bundle = new Bundle();
-                    lat = location.getLatitude();
-                    lon = location.getLongitude();
-                    String[] cords = {Double.toString(lat), Double.toString(lon)};
-                    bundle.putStringArray("cords", cords);
-                    intentBundle.putExtras(bundle);
-                    startActivity(intentBundle);
-                }
-            }
+        gps = new GPSTracker(TechMenuActivity.this);
 
-            @Override
-            public void onStatusChanged(String s, int i, Bundle bundle) {
+        if(gps.canGetLocation()){
+            latitude = gps.getLatitude();
+            longitude = gps.getLongitude();
+        }else{
+            // can't get location
+            // GPS or Network is not enabled
+            // Ask user to enable GPS/network in settings
+            gps.showSettingsAlert();
+        }
+    }
 
-            }
-
-            @Override
-            public void onProviderEnabled(String s) {
-
-            }
-
-            @Override
-            public void onProviderDisabled(String s) {
-                Intent i = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                startActivity(i);
-            }
-        };
+    @Override
+    public void onResume(){
+        super.onResume();
+        addBLE.setEnabled(true);
+        addQR.setEnabled(true);
     }
 
     /**
@@ -102,21 +68,19 @@ public class TechMenuActivity extends AppCompatActivity {
      */
     public void onClickAddQR(View v) {
         addBLE.setEnabled(false);
-        button = "QR";
-        addQR.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //noinspection MissingPermission
-                if (ActivityCompat.checkSelfPermission(TechMenuActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(TechMenuActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                        requestPermissions(new String[]{Manifest.permission.CAMERA,
-                                Manifest.permission.ACCESS_COARSE_LOCATION,
-                                Manifest.permission.ACCESS_FINE_LOCATION},1);
-                    }
-                }
-                locationManager.requestSingleUpdate("gps", listener, null);
-            }
-        });
+        Intent intentBundle = new Intent(TechMenuActivity.this, QRGeneratorActivity.class);
+        Bundle bundle = new Bundle();
+        String hashLat = hashCord(latitude);
+        String hashLon = hashCord(longitude);
+        hashLocation = hashLat + hashLon;
+        String[] cords = {hashLat, hashLon};
+        mDatabase = mDatabase.getRoot().child("QR Tags");
+        String ID = hashLocation;
+        QR qrToDB = new QR(ID, Double.toString(lat), Double.toString(lon));
+        mDatabase.push().setValue(qrToDB);
+        bundle.putStringArray("cords", cords);
+        intentBundle.putExtras(bundle);
+        startActivity(intentBundle);
     }
 
     /**
@@ -125,21 +89,12 @@ public class TechMenuActivity extends AppCompatActivity {
      */
     public void onClickAddBLE(View v){
         addQR.setEnabled(false);
-        button = "BLE";
-        addBLE.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //noinspection MissingPermission
-                if (ActivityCompat.checkSelfPermission(TechMenuActivity.this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(TechMenuActivity.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                        requestPermissions(new String[]{Manifest.permission.CAMERA,
-                                Manifest.permission.ACCESS_COARSE_LOCATION,
-                                Manifest.permission.ACCESS_FINE_LOCATION},1);
-                    }
-                }
-                locationManager.requestSingleUpdate("gps", listener, null);
-            }
-        });
+        Intent intentBundle = new Intent(TechMenuActivity.this, TechAddBleActivity.class);
+        Bundle bundle = new Bundle();
+        String[] cords = {Double.toString(latitude), Double.toString(longitude)};
+        bundle.putStringArray("cords", cords);
+        intentBundle.putExtras(bundle);
+        startActivity(intentBundle);
     }
 
     /**

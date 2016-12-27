@@ -3,12 +3,9 @@ package com.mytrackerapp.myapplication.user;
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.location.Location;
-import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -30,23 +27,24 @@ import java.util.ArrayList;
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
 
 
-public class MenuActivity extends AppCompatActivity implements ZXingScannerView.ResultHandler{
+public class MenuActivity extends AppCompatActivity implements ZXingScannerView.ResultHandler {
     private DatabaseReference mDatabase;
     private Button gpsBtn;
     private LocationManager locationManager;
-    private LocationListener listener;
     private ZXingScannerView mScannerView;
     final private int REQUEST_PERMISSIONS = 1;
     private ArrayList<QR> modelItems;
     private String userKey;
     private String userName;
     private Button qrBtn;
+    private GPSTracker gps;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu);
-        qrBtn = (Button)findViewById(R.id.qrBtn);
+        qrBtn = (Button) findViewById(R.id.qrBtn);
         qrBtn.setEnabled(false);
         mDatabase = FirebaseDatabase.getInstance().getReference();
         mDatabase = mDatabase.getRoot().child("QR Tags");
@@ -56,7 +54,7 @@ public class MenuActivity extends AppCompatActivity implements ZXingScannerView.
 
         Intent intent = getIntent();
         Bundle extBundle = intent.getExtras();
-        if(extBundle != null && !extBundle.isEmpty()) {
+        if (extBundle != null && !extBundle.isEmpty()) {
             String[] cords;
             boolean hasGpsCords = extBundle.containsKey("key");
             if (hasGpsCords) {
@@ -66,30 +64,6 @@ public class MenuActivity extends AppCompatActivity implements ZXingScannerView.
             }
         }
 
-        listener = new LocationListener() {
-            @Override
-            public void onLocationChanged(Location location) {
-                Intent intentBundle = new Intent(MenuActivity.this,MapsActivity.class);
-                Bundle bundle = new Bundle();
-                String[] cords = {userName,userKey,location.getLatitude()+"",location.getLongitude()+""};
-                bundle.putStringArray("cords", cords);
-                intentBundle.putExtras(bundle);
-                startActivity(intentBundle);
-            }
-            @Override
-            public void onStatusChanged(String s, int i, Bundle bundle) {
-
-            }
-            @Override
-            public void onProviderEnabled(String s) {
-
-            }
-            @Override
-            public void onProviderDisabled(String s) {
-                Intent i = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                startActivity(i);
-            }
-        };
         mDatabase.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -100,8 +74,40 @@ public class MenuActivity extends AppCompatActivity implements ZXingScannerView.
                     qrBtn.setEnabled(true);
                 }
             }
+
             @Override
             public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+        gpsBtn.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View arg0) {
+                // create class object
+                gps = new GPSTracker(MenuActivity.this);
+
+                // check if GPS enabled
+                if(gps.canGetLocation()){
+
+                    double latitude = gps.getLatitude();
+                    double longitude = gps.getLongitude();
+
+                    Intent intentBundle = new Intent(MenuActivity.this, MapsActivity.class);
+                    Bundle bundle = new Bundle();
+                    String[] cords = {userName, userKey, latitude + "", longitude + ""};
+                    bundle.putStringArray("cords", cords);
+                    intentBundle.putExtras(bundle);
+                    startActivity(intentBundle);
+
+                    // \n is for new line
+                }else{
+                    // can't get location
+                    // GPS or Network is not enabled
+                    // Ask user to enable GPS/network in settings
+                    gps.showSettingsAlert();
+                }
 
             }
         });
@@ -120,7 +126,7 @@ public class MenuActivity extends AppCompatActivity implements ZXingScannerView.
         if ((keyCode == KeyEvent.KEYCODE_BACK)) {
             Log.e(this.getClass().getName(), "back button pressed");
         }
-        startActivity(new Intent(this,MenuActivity.class));
+        startActivity(new Intent(this, MenuActivity.class));
         return super.onKeyDown(keyCode, event);
     }
 
@@ -131,8 +137,8 @@ public class MenuActivity extends AppCompatActivity implements ZXingScannerView.
      * @param grantResults
      */
     @Override
-    public void onRequestPermissionsResult(int requestCode ,String[] permissions, int[] grantResults) {
-        switch(requestCode){
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        switch (requestCode) {
             case REQUEST_PERMISSIONS: {
                 configure_button();
                 break;
@@ -147,7 +153,7 @@ public class MenuActivity extends AppCompatActivity implements ZXingScannerView.
      * start the QR scanner
      * @param view
      */
-    public void QrScanner(View view){
+    public void QrScanner(View view) {
         mScannerView = new ZXingScannerView(this);
         setContentView(mScannerView);
         mScannerView.setResultHandler(this);
@@ -158,33 +164,19 @@ public class MenuActivity extends AppCompatActivity implements ZXingScannerView.
      * check if user had gave all the required permission
      * ask for any missing permission
      */
-    void configure_button(){
+    void configure_button() {
         // first check for permissions
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
                 ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-                ActivityCompat.checkSelfPermission(this,Manifest.permission.CAMERA)!= PackageManager.PERMISSION_GRANTED) {
-            //ActivityCompat.checkSelfPermission(this,Manifest.permission.BLUETOOTH) != PackageManager.PERMISSION_GRANTED &&
-            //ActivityCompat.checkSelfPermission(this,Manifest.permission.BLUETOOTH_ADMIN)!=PackageManager.PERMISSION_GRANTED &&
-            //ActivityCompat.checkSelfPermission(this,Manifest.permission.INTERNET) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 requestPermissions(new String[]{Manifest.permission.CAMERA,
                                 Manifest.permission.ACCESS_COARSE_LOCATION,
                                 Manifest.permission.ACCESS_FINE_LOCATION}
-                        //Manifest.permission.INTERNET,
-                        //Manifest.permission.BLUETOOTH,
-                        //Manifest.permission.BLUETOOTH_ADMIN}
-                        ,REQUEST_PERMISSIONS);
+                        , REQUEST_PERMISSIONS);
             }
             return;
         }
-        // this code won't execute IF permissions are not allowed, because in the line above there is return statement.
-        gpsBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //noinspection MissingPermission
-                locationManager.requestSingleUpdate("gps", listener, null);
-            }
-        });
     }
 
     /**
