@@ -76,7 +76,7 @@ public class TechMenuActivity extends AppCompatActivity {
         String[] cords = {hashLat, hashLon};
         mDatabase = mDatabase.getRoot().child("QR Tags");
         String ID = hashLocation;
-        QR qrToDB = new QR(ID, Double.toString(lat), Double.toString(lon));
+        QR qrToDB = new QR(ID, Double.toString(latitude), Double.toString(longitude));
         mDatabase.push().setValue(qrToDB);
         bundle.putStringArray("cords", cords);
         intentBundle.putExtras(bundle);
