@@ -26,12 +26,11 @@ import java.util.ArrayList;
 
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
 
-
-public class MenuActivity extends AppCompatActivity implements ZXingScannerView.ResultHandler {
+public class MenuActivity extends AppCompatActivity {
     private DatabaseReference mDatabase;
     private Button gpsBtn;
     private LocationManager locationManager;
-    private ZXingScannerView mScannerView;
+    //private ZXingScannerView mScannerView;
     final private int REQUEST_PERMISSIONS = 1;
     private ArrayList<QR> modelItems;
     private String userKey;
@@ -93,9 +92,11 @@ public class MenuActivity extends AppCompatActivity implements ZXingScannerView.
 
                     double latitude = gps.getLatitude();
                     double longitude = gps.getLongitude();
-
+                    System.out.println("LAT "+latitude+", Lon "+longitude);
                     Intent intentBundle = new Intent(MenuActivity.this, MapsActivity.class);
                     Bundle bundle = new Bundle();
+                    System.out.println(userName);
+                    System.out.println(userKey);
                     String[] cords = {userName, userKey, latitude + "", longitude + ""};
                     bundle.putStringArray("cords", cords);
                     intentBundle.putExtras(bundle);
@@ -149,16 +150,33 @@ public class MenuActivity extends AppCompatActivity implements ZXingScannerView.
         }
     }
 
+    public void qrClikcedBtn(View v){
+        Intent intentBundle2 = new Intent(MenuActivity.this,CameraActivity.class);
+        Bundle bundle2 = new Bundle();
+        String[] cords2 = new String[modelItems.size()*3+2];
+        cords2[0] = userName;
+        cords2[1] = userKey;
+        for (int i = 2, j = 0; j < modelItems.size(); i+=3, j++){
+            cords2[i] = modelItems.get(j).getID();
+            cords2[i+1] = modelItems.get(j).getCordinate1()+"";
+            cords2[i+2] = modelItems.get(j).getCordinate2()+"";
+        }
+        bundle2.putStringArray("cords", cords2);
+        intentBundle2.putExtras(bundle2);
+        startActivity(intentBundle2);
+    }
+
+
     /**
      * start the QR scanner
      * @param view
      */
-    public void QrScanner(View view) {
+    /*public void QrScanner(View view) {
         mScannerView = new ZXingScannerView(this);
         setContentView(mScannerView);
         mScannerView.setResultHandler(this);
         mScannerView.startCamera();
-    }
+    }*/
 
     /**
      * check if user had gave all the required permission
@@ -214,8 +232,8 @@ public class MenuActivity extends AppCompatActivity implements ZXingScannerView.
     @Override
     public void onPause(){
         super.onPause();
-        if(mScannerView != null)
-            mScannerView.stopCamera();
+        /*if(mScannerView != null)
+            mScannerView.stopCamera();*/
     }
 
     /**
@@ -223,7 +241,7 @@ public class MenuActivity extends AppCompatActivity implements ZXingScannerView.
      * send it to next activity
      * @param result
      */
-    @Override
+    /*@Override
     public void handleResult(final Result result) {
         for (int i = 0; i < modelItems.size() ; i++) {
             if(modelItems.get(i).getID().equals(result.getText())){
@@ -237,5 +255,5 @@ public class MenuActivity extends AppCompatActivity implements ZXingScannerView.
             }
         }
         startActivity(new Intent(this,MenuActivity.class));
-    }
+    }*/
 }

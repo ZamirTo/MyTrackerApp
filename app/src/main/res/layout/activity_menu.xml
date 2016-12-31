@@ -17,7 +17,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/qrBtn"
         android:background="@drawable/qr"
-        android:onClick="QrScanner"
+        android:onClick="qrClikcedBtn"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />

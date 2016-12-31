@@ -46,6 +46,7 @@
         <activity android:name=".tech.QRGeneratorActivity" />
         <activity android:name=".admin.AdminActivity" />
         <activity android:name=".tech.TechAddBleActivity" />
+        <activity android:name=".user.CameraActivity"></activity>
     </application>
 
 </manifest>

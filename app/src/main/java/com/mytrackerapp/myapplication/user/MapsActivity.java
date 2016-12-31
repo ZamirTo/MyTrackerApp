@@ -3,6 +3,7 @@ package com.mytrackerapp.myapplication.user;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -58,12 +59,16 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
             boolean hasFriendsCords = extBundle.containsKey("fcords");
             if (hasGpsCords) {
                 cords = extBundle.getStringArray("cords");
-                LatLng position = new LatLng(Double.parseDouble(cords[2]), Double.parseDouble(cords[3]));
-                mMap.addMarker(new MarkerOptions().position(position).title("You Are Here"));
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(position, 14));
-                // add update to the user location as string : cords1,cords2;
-                mDatabase = mDatabase.getRoot().child("Users").child(cords[1]);
-                mDatabase.setValue(new NewUser(cords[0],mAuth.getCurrentUser().getEmail(),cords[2]+","+cords[3],"User"));
+                if(cords[1]!=null) {
+                    LatLng position = new LatLng(Double.parseDouble(cords[2]), Double.parseDouble(cords[3]));
+                    mMap.addMarker(new MarkerOptions().position(position).title("You Are Here"));
+                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(position, 14));
+                    // add update to the user location as string : cords1,cords2;
+                    mDatabase = mDatabase.getRoot().child("Users").child(cords[1]);
+                    mDatabase.setValue(new NewUser(cords[0], mAuth.getCurrentUser().getEmail(), cords[2] + "," + cords[3], "User"));
+                } else {
+                    Toast.makeText(this,"Plese try again",Toast.LENGTH_SHORT).show();
+                }
             }
             else if(hasFriendsCords){
                 cords = extBundle.getStringArray("fcords");
