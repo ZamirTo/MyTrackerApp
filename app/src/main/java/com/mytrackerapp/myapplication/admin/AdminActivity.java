@@ -86,7 +86,7 @@ public class AdminActivity extends AppCompatActivity {
                 for (DataSnapshot postSnapshot: dataSnapshot.getChildren()) {
                     NewUser post = postSnapshot.getValue(NewUser.class);
                     modelItems.add(new newUserModel(post.getName(),postSnapshot.getKey(),false,post.getEmail()));
-//                    System.out.println("Done Users");
+                    System.out.println(post.getEmail());
                     getUsers.setEnabled(true);
                 }
             }
@@ -385,11 +385,8 @@ public class AdminActivity extends AppCompatActivity {
         int size3 = bletemsToDelete.size();
         int size4 = modelItemsToPromote.size();
         for (int i = 0 ; i < size4; i++){
-//            System.out.println(modelItemsToPromote.get(i).getCordinates());
-//            System.out.println(modelItemsToPromote.get(i).getName());
-//            System.out.println(modelItems.get(i).getEmail());
             mDatabase.getRoot().child("Users").child(modelItemsToPromote.get(i).getCordinates())
-                    .setValue(new NewUser(modelItemsToPromote.get(i).getName(),modelItems.get(i).getEmail(),"0,0","Tech"));
+                    .setValue(new NewUser(modelItemsToPromote.get(i).getName(),modelItemsToPromote.get(i).getEmail(),"0,0","Tech"));
         }
         for (int i = 0 ; i < size ; i++){
             mDatabase.getRoot().child("Users").child(modelItemsToDelete.get(i).getCordinates()).removeValue();
